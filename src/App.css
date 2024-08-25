@@ -1,38 +1,49 @@
-.App {
+html{
+  font-size: 1.2rem;
+}
+
+.orange-text{
+  display: block;
+  color: #f56551;
+}
+
+
+
+/* Hero */
+.hero-container{
   text-align: center;
+  font-size: 1.5rem;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.hero-container>*{
+  margin-bottom: 5rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+
+  .hero-container .header{
+    font-size: 60px;
+    width: 70vw;
+    margin: 5rem auto;
   }
-}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Create trip  */
+.create-trip{}
+
+  .create-trip__intro{
+    margin-top: 5rem;
   }
-  to {
-    transform: rotate(360deg);
+    
+  .create-trip__intro>*{
+    margin-top:1rem;
   }
-}
+
+  .create-trip__forms{
+    margin-top: 5rem;
+  }
+
+    .create-trip__forms .title{
+      font-size: 1.5rem;
+      margin-top: 1.5rem;
+    }
