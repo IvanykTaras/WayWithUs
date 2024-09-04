@@ -29,7 +29,9 @@ html{
 
 
 /* Create trip  */
-.create-trip{}
+.create-trip{
+  padding: 3rem;
+}
 
   .create-trip__intro{
     margin-top: 5rem;
@@ -47,3 +49,10 @@ html{
       font-size: 1.5rem;
       margin-top: 1.5rem;
     }
+
+    .create-trip .button{
+      display: block;
+      margin-top: 3rem;
+      margin-left: auto;
+    }
+
