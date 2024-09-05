@@ -7,7 +7,7 @@ import { USER_INFO } from "../assets/ApiKeys";
 
 interface IProps{
     show:boolean;
-    handleClose: ()=>void
+    handleClose: ()=>void    
 }
 
 
