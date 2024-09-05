@@ -1,36 +1,157 @@
-import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap"
-import { LogoSVG } from "../../assets/LogoSVG"
-import { Link, useNavigate } from "react-router-dom"
+// import { useEffect, useState } from "react"
+// import { Button, Container, Nav, Navbar } from "react-bootstrap"
+// import { LogoSVG } from "../../assets/LogoSVG"
+// import { Link } from "react-router-dom"
+// import { AuthModal } from "../AuthModal"
+// import { IGoogleUser } from "../../interfaces/IGoogleUser"
 
+// export const Header: React.FC = () => {
 
+//   const [authModalShow, setAuthModalShow] = useState(true);
+//   const [user, setUser] = useState<IGoogleUser | undefined>();
 
-export const Header: React.FC = ()=>{
+//   useEffect(() => {
+//     const user = sessionStorage.getItem("user")
+//     if (user) {
+//       console.log(JSON.parse(user))
+//       setUser(JSON.parse(user))
+//       setAuthModalShow(false)
+//     }
+//   }, [authModalShow])
 
-    return (<>
+//   return (
+//     <>
+//       <Navbar expand="lg" className="bg-body-tertiary">
+//         <Container>
+//           <Navbar.Brand href="#home">
+//             <Link to={"/"}>
+//               <LogoSVG />
+//             </Link>
+//           </Navbar.Brand>
+//           <Navbar.Toggle aria-controls="basic-navbar-nav" />
+//           <Navbar.Collapse id="basic-navbar-nav">
+//             <Nav className="me-auto">
+//               <Link to={"/"}>
+//                 <Button>Home</Button>
+//               </Link>
+//             </Nav>
+//             <Nav>
+//               <Link to={"/trip-view"}>
+//                 <Button variant="dark">Sign in</Button>
+//               </Link>
+//             </Nav>
+//           </Navbar.Collapse>
+//         </Container>
+//       </Navbar>
+//       <AuthModal show={authModalShow} handleClose={() => setAuthModalShow(false)} />
+//     </>
+//   );
+// };
+import { useEffect, useState } from "react";
+import { Button, Container, Nav, Navbar, Dropdown } from "react-bootstrap";
+import { LogoSVG } from "../../assets/LogoSVG";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthModal } from "../AuthModal";
+import { IGoogleUser } from "../../interfaces/IGoogleUser";
 
-    <Navbar expand="lg" className="bg-body-tertiary">
+export const Header: React.FC = () => {
+  const [authModalShow, setAuthModalShow] = useState(false); 
+  const [user, setUser] = useState<IGoogleUser | undefined>(); 
+  const navigate = useNavigate(); 
+
+  
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); 
+    }
+  }, []);
+
+  const handleSignInClick = () => {
+    setAuthModalShow(true); 
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user"); 
+    setUser(undefined); 
+    navigate("/"); 
+  };
+
+ 
+  useEffect(() => {
+    if (!authModalShow) {
+      const storedUser = sessionStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser)); 
+      }
+    }
+  }, [authModalShow]);
+
+  return (
+    <>      
+      <style>
+        {`
+          .custom-dropdown-toggle::after {
+            display: none !important; 
+          }
+        `}
+      </style>
+
+      <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
-            <Navbar.Brand href="#home">
-                <Link to={"/"}>
-                    <LogoSVG/>
-                </Link>
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                    <Link to={"/"}>
-                        <Button>Home</Button>
-                    </Link>
-                </Nav>
-                <Nav>
-                    <Link to={"/trip-view"}>
-                        <Button variant="dark">Sign in</Button>
-                    </Link>
-                </Nav>
-                
-            </Navbar.Collapse>
-        </Container>
-    </Navbar>
+          <Navbar.Brand>
+            <Link to={"/"}>
+              <LogoSVG />
+            </Link>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto" /> 
+            <Nav>              
+              {!user ? (
+                <Button variant="dark" onClick={handleSignInClick}>
+                  Sign in
+                </Button>
+              ) : (
+                <>
+                  <Link to={"/create-trip"} style={{ marginRight: "15px" }}>
+                    <Button variant="outline-dark">+ Create Trip</Button>
+                  </Link>
+                  <Link to={"/my-trips"} style={{ marginRight: "15px" }}>
+                    <Button variant="outline-dark">My Trips</Button>
+                  </Link>
 
-    </>)
-}
+                  <Dropdown align="end">
+                    <Dropdown.Toggle
+                      as="div" 
+                      style={{ cursor: "pointer", display: "inline-block" }}
+                      className="custom-dropdown-toggle"
+                    >
+                      <div
+                        style={{
+                          borderRadius: "50%",
+                          backgroundImage: `url(${user?.picture})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          width: "40px",
+                          height: "40px",
+                        }}
+                      />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <AuthModal
+        show={authModalShow}
+        handleClose={() => setAuthModalShow(false)}
+      />
+    </>
+  );
+};
