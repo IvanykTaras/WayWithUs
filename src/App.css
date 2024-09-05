@@ -7,6 +7,10 @@ html{
   color: #f56551;
 }
 
+.margin-bottom-elements>*{
+  margin-bottom: .5rem;
+}
+
 
 
 /* Hero */
