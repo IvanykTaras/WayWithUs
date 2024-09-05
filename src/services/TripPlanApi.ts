@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export class TripPlanApi {
-    private static url = "https://localhost:7137/api/TripPlan"; 
+    private static url: string = "https://localhost:7137/api/TripPlan"; 
 
 
     static async create(data: ITripPlan){
@@ -12,6 +12,10 @@ export class TripPlanApi {
              },
             body: JSON.stringify(data)
         })
+    }
+
+    static async get(): Promise<ITripPlan[]>{
+      return (await axios.get(this.url)).data;
     }
 }
 
@@ -51,7 +55,7 @@ export interface ITripPlan{
     itinerary: Array<IItinerary>
 }
 
-interface IHotel{
+export interface IHotel{
      name:string;
      address:string;
      price:string;
@@ -61,12 +65,12 @@ interface IHotel{
      description:string;
 }
 
-interface IItinerary{
+export interface IItinerary{
     day: number;
     places: Array<IPlace>
 }
 
-interface IPlace{
+export interface IPlace{
     time:string;
     location:string;
     details:string;
