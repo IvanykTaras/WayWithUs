@@ -55,9 +55,14 @@ export const Header: React.FC = () => {
               <LogoSVG />
             </Link>
           </Navbar.Brand>
+          
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto" /> 
+          {/* <Navbar.Collapse id="basic-navbar-nav"> */}
+            <Nav>
+            <Link to={"/trip-view"} style={{ marginRight: "15px" }}>
+                <Button variant="outline-dark">trip view</Button>
+            </Link>
+            </Nav>
             <Nav>              
               {!user ? (
                 <Button variant="dark" onClick={handleSignInClick}>
@@ -96,7 +101,7 @@ export const Header: React.FC = () => {
                 </>
               )}
             </Nav>
-          </Navbar.Collapse>
+          {/* </Navbar.Collapse> */}
         </Container>
       </Navbar>
       <AuthModal

@@ -6,17 +6,17 @@ import { Option } from "react-google-places-autocomplete/build/types"
 import styled from "styled-components"
 import { BudgetType } from "../enums/BudgetType"
 import { GroupType } from "../enums/GroupType"
-import { PLACES_API_KEY } from "../assets/ApiKeys"
-import { AI_PROMPT, chatSession } from "../assets/AiModel"
+import { apiKeyAndUrl, PLACES_API_KEY } from "../assets/ApiKeys"
 import { toast } from "react-toastify"
 import { AuthModal } from "./AuthModal"
 import { IGoogleUser } from "../interfaces/IGoogleUser"
 import { MongoClient } from "mongodb"
 import { ITripPlan, TripPlanApi } from "../services/TripPlanApi"
+import { GeminiApi, IGeminiTrip } from "../services/GeminiApi"
 
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 type FormData = {
-    googlePlaces: Option | null,
+    location: Option | null,
     days: number,
     budget: BudgetType,
     group: GroupType
@@ -27,7 +27,7 @@ export const CreateTrip: React.FC = ()=>{
     const [authModalShow,setAuthModalShow] = useState(true);
     const [user,setUser] = useState<IGoogleUser>();
     const [formData, setFormData] = useState<FormData>({
-        googlePlaces: null,
+        location: null,
         days: 0,
         budget: BudgetType.Cheap,
         group: GroupType.OnePerson
@@ -37,40 +37,27 @@ export const CreateTrip: React.FC = ()=>{
     const onBudgetChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, budget: e.currentTarget.value as BudgetType  })}
     const onGroupChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, group: e.currentTarget.value as GroupType })}
 
-    
-    useEffect(()=>{
-        const user = sessionStorage.getItem("user")
-        if(user){
-            console.log(JSON.parse(user))
-            setUser(JSON.parse(user))
-            setAuthModalShow(false)
-            console.log(user)
-        }
-
-        console.log(formData);
-    },[formData,authModalShow])
-
     const generateTrip = async ()=>{
-        toast(123)
-        const finalPrompt = AI_PROMPT
-        .replace("{location}",formData.googlePlaces?.label as string)
-        .replace("{days_number}", formData.days.toString())
-        .replace("{group_enum}", formData.group)
-        .replace("{budget_enum}", formData.budget)
-       
-        const result = await chatSession.sendMessage(finalPrompt);
-
-        console.log(finalPrompt)
-        console.log(JSON.parse(result.response.text()));
-        const tripPlan:ITripPlan = JSON.parse(result.response.text())
+        toast("start creating")
+        const geminiApi = new GeminiApi(apiKeyAndUrl.GEMINI_API_KEY);
+        const geminiTrip:IGeminiTrip = {
+            location: formData.location?.label as string,
+            daysNumber: formData.days.toString(),
+            group: formData.group,
+            budget: formData.budget
+        }
+        const tripPlan = await geminiApi.generateTripJson(geminiTrip);
         await TripPlanApi.create(tripPlan);      
         toast("created") 
     }
 
-
-
-
-
+    useEffect(()=>{
+        const user = sessionStorage.getItem("user")
+        if(user){
+            setUser(JSON.parse(user))
+            setAuthModalShow(false)
+        }
+    },[authModalShow])
 
     return <div>
         <Container className="create-trip">
@@ -84,8 +71,8 @@ export const CreateTrip: React.FC = ()=>{
                 <GooglePlacesAutocomplete 
                     apiKey={PLACES_API_KEY}
                     selectProps={{
-                        value: formData?.googlePlaces,
-                        onChange: (newValue)=>setFormData({...formData, googlePlaces: newValue})
+                        value: formData?.location,
+                        onChange: (newValue)=>setFormData({...formData, location: newValue})
                     }}
                 />
                 
