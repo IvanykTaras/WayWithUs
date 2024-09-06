@@ -19,9 +19,9 @@ export const TripView: React.FC = ()=>{
     useEffect(()=>{
         (async ()=>{
             setLoadding(true)
-            const plan = await TripPlanApi.get();
-            setTripPlan(plan[0])
-            console.dir(plan)
+                const plan = await TripPlanApi.get();
+                setTripPlan(plan[0])
+                console.log(plan)
             setLoadding(false)
         })()
     },[])
@@ -67,7 +67,7 @@ export const TripView: React.FC = ()=>{
             <Carousel responsive={responsive} centerMode={true} infinite={true} containerClass="mb-4">
                 {tripPlan ? tripPlan.hotels.map((e,i)=>{
                     return(
-                        <Card key={i} style={{ width: '18rem', height:"100%"}}>
+                        <Card key={i} style={{ width: '18rem', height:"100%"}} className="makeBigger">
                         <Card.Img variant="top" src={require("../assets/img/car.png")} />
                         <Card.Body className="margin-bottom-elements">
                             <Card.Title>{e.name}</Card.Title>
@@ -95,7 +95,7 @@ export const TripView: React.FC = ()=>{
             <Row>
                 {
                     Array(19).fill(null).map((e,i)=>{
-                        return (<Col key={i} md={4}>
+                        return (<Col key={i} md={4} className="makeBigger">
                             <Card style={{ minWidth: '18rem', marginBottom:"2rem"}}>
                                 <Card.Header style={{fontWeight:"bold"}}>
                                 2:00 PM - 4:00 PM
