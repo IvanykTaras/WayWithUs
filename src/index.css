@@ -1,3 +1,10 @@
 p{
     margin: 0;
 }
+
+.mb-4{
+  transition: all .1s ease-in-out;
+}
+.mb-4:hover{
+  transform: scale(1.05);
+}

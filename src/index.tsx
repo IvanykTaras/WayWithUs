@@ -15,6 +15,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { CLIEND_ID_OAUTH } from './assets/ApiKeys';
 import { Hero } from './components/custom/Hero';
 import { TripView } from './components/TripVIew';
+import { MyTrips } from './components/MyTrips';
 
 
 
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path:"/trip-view",
         element:<TripView/> 
+      },
+      {
+        path:"/my-trips",
+        element:<MyTrips/>
       }
     ]
   },
