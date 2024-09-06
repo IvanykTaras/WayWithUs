@@ -33,6 +33,7 @@ export const Header: React.FC = () => {
     if (!authModalShow) {
       const storedUser = sessionStorage.getItem("user");
       if (storedUser) {
+        console.log(JSON.parse(storedUser))
         setUser(JSON.parse(storedUser)); 
       }
     }
