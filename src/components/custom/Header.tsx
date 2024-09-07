@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Nav, Navbar, Dropdown } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, Dropdown, Card } from "react-bootstrap";
 import { LogoSVG } from "../../assets/LogoSVG";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthModal } from "../AuthModal";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
+import { Box, Flex, Avatar,Text } from "@radix-ui/themes";
 
 export const Header: React.FC = () => {
   const [authModalShow, setAuthModalShow] = useState(false); 
@@ -66,9 +67,11 @@ export const Header: React.FC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           {/* <Navbar.Collapse id="basic-navbar-nav"> */}
             <Nav>
-            {/* navgiation */}
+              <Link to={"/theme"}>
+                <Button variant="outline-dark">Theme</Button>
+              </Link>
             </Nav>
-            <Nav>              
+            <Nav style={{alignItems:"center"}}>              
               {!user ? (
                 <Button variant="dark" onClick={handleSignInClick}>
                   Sign in
@@ -88,7 +91,7 @@ export const Header: React.FC = () => {
                       style={{ cursor: "pointer", display: "inline-block" }}
                       className="custom-dropdown-toggle"
                     >
-                      <div
+                      {/* <div
                         style={{
                           borderRadius: "50%",
                           backgroundImage: `url(${user?.picture})`,
@@ -97,7 +100,27 @@ export const Header: React.FC = () => {
                           width: "40px",
                           height: "40px",
                         }}
-                      />
+                      /> */}
+                      <Box width="300px">
+                        <Card style={{padding:".5rem"}}>
+                          <Flex gap="3" align="center">
+                            <Avatar
+                              size="3"
+                              src={user.picture}
+                              radius="full"
+                              fallback="T"
+                            />
+                            <Box>
+                              <Text as="div" size="2" weight="bold">
+                                {user.name}
+                              </Text>
+                              <Text as="div" size="2" color="gray">
+                                {user.email}
+                              </Text>
+                            </Box>
+                          </Flex>
+                        </Card>
+                      </Box>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>

@@ -5,8 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import './App.css';
 import "react-multi-carousel/lib/styles.css";
-import 'react-toastify/dist/ReactToastify.css';
 import '@radix-ui/themes/styles.css';
+import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CreateTrip } from './components/CreateTrip';
@@ -17,6 +17,8 @@ import { CLIEND_ID_OAUTH } from './assets/ApiKeys';
 import { Hero } from './components/custom/Hero';
 import { TripView } from './components/TripVIew';
 import { MyTrips } from './components/MyTrips';
+import { MyTheme } from './components/MyTheme';
+import { Theme } from '@radix-ui/themes';
 
 
 
@@ -42,7 +44,12 @@ const router = createBrowserRouter([
       {
         path:"/my-trips",
         element:<MyTrips/>
+      },
+      {
+        path:"/theme",
+        element: <MyTheme/>
       }
+
     ]
   },
 ])
@@ -57,7 +64,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={CLIEND_ID_OAUTH}>
+      <Theme>
       <RouterProvider router={router}/>
+      </Theme>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );
