@@ -4,8 +4,8 @@ import { Button, Container, Form, FormControlProps } from "react-bootstrap"
 import GooglePlacesAutocomplete from "react-google-places-autocomplete"
 import { Option } from "react-google-places-autocomplete/build/types"
 import styled from "styled-components"
-import { BudgetType } from "../enums/BudgetType"
-import { GroupType } from "../enums/GroupType"
+import { BudgetType, BudgetTypeValueList } from "../enums/BudgetType"
+import { GroupType, GroupTypeValueList } from "../enums/GroupType"
 import { apiKeyAndUrl, PLACES_API_KEY } from "../assets/ApiKeys"
 import { toast } from "react-toastify"
 import { AuthModal } from "./AuthModal"
@@ -34,18 +34,20 @@ export const CreateTrip: React.FC = ()=>{
     });
 
     const onDaysChange = (e:React.FormEvent<FormControlElement>)=>{setFormData({...formData, days: Number(e.currentTarget.value) })}
-    const onBudgetChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, budget: e.currentTarget.value as BudgetType  })}
-    const onGroupChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, group: e.currentTarget.value as GroupType })}
+    const onBudgetChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, budget: Number(e.currentTarget.value)   })}
+    const onGroupChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, group: Number(e.currentTarget.value)  })}
 
     const generateTrip = async ()=>{
         toast("start creating")
         const geminiApi = new GeminiApi(apiKeyAndUrl.GEMINI_API_KEY);
         const geminiTrip:IGeminiTrip = {
+            userEmail: user?.email as string,
             location: formData.location?.label as string,
             daysNumber: formData.days.toString(),
-            group: formData.group,
-            budget: formData.budget
+            groupType: formData.group,
+            budgetType: formData.budget
         }
+        console.log("geminiTrip",geminiTrip)
         const tripPlan = await geminiApi.generateTripJson(geminiTrip);
         await TripPlanApi.create(tripPlan);      
         toast("created") 
@@ -81,18 +83,17 @@ export const CreateTrip: React.FC = ()=>{
 
                 <h2 className="title">What is Your Budget?</h2>
                 <Form.Select aria-label="Default select example" onChange={onBudgetChange}>
-                    {(Object.keys(BudgetType) as Array<keyof typeof BudgetType>).map(e=>(<option value={e}>{e}</option>))}
+                    {(BudgetTypeValueList).map((e,i)=>(<option value={i}>{e}</option>))}
                 </Form.Select>
                 
                 <h2 className="title">Who do you plan on traveling with on your next adventure?</h2>
                 <Form.Select aria-label="Default select example" onChange={onGroupChange}>
-                    {(Object.keys(GroupType) as Array<keyof typeof GroupType>).map(e=>(<option value={e}>{e}</option>))}
+                    {(GroupTypeValueList).map((e,i)=>(<option value={i}>{e}</option>))}
                 </Form.Select>
                 
                 <Button className="button" onClick={()=>generateTrip()}>create trip</Button>
             </div>
         </Container>
-        <AuthModal show={authModalShow} handleClose={()=>setAuthModalShow(false)}/>
     </div>
 }
 

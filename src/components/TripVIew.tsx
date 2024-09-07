@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, InputGroup, Row } from "react-bootstrap"
 import Carousel from "react-multi-carousel";
 import { FaMapLocationDot } from "react-icons/fa6";
-import { ITripPlan, TripPlanApi } from "../services/TripPlanApi";
+import { IHotel, ITripPlan, TripPlanApi } from "../services/TripPlanApi";
 import { Loadding } from "./custom/Loadding";
+import GoogleApi from "../services/GoogleApi";
 
 export const TripView: React.FC = ()=>{
     const [loadding ,setLoadding] = useState<boolean>(true)
@@ -20,8 +21,19 @@ export const TripView: React.FC = ()=>{
         (async ()=>{
             setLoadding(true)
                 const plan = await TripPlanApi.get();
+                plan[0].hotels.map(async (e)=>{
+                    const hotelImages = await GoogleApi.getPhotos(e.name, 400,400);
+                    e.image_url = hotelImages[0]
+                    return e;
+                })
+
+                for(let i=0; i<plan[0].hotels.length; i++){
+                    const hotelImages = await GoogleApi.getPhotos(plan[0].hotels[i].name, 400,400);
+                    plan[0].hotels[i].image_url = hotelImages[0]
+                }
+                
                 setTripPlan(plan[0])
-                console.log(plan)
+                console.log(plan[0])
             setLoadding(false)
         })()
     },[])
@@ -68,7 +80,7 @@ export const TripView: React.FC = ()=>{
                 {tripPlan ? tripPlan.hotels.map((e,i)=>{
                     return(
                         <Card key={i} style={{ width: '18rem', height:"100%"}} className="makeBigger">
-                        <Card.Img variant="top" src={require("../assets/img/car.png")} />
+                        <Card.Img variant="top" src={e.image_url} style={{height:"200px",objectFit: "cover"}} />
                         <Card.Body className="margin-bottom-elements">
                             <Card.Title>{e.name}</Card.Title>
                             <p>

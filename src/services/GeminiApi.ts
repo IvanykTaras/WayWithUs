@@ -1,6 +1,6 @@
 import {GoogleGenerativeAI,HarmCategory,HarmBlockThreshold,ChatSession} from "@google/generative-ai"
-import { GroupType } from "../enums/GroupType";
-import { BudgetType } from "../enums/BudgetType";
+import { GroupType, GroupTypeValueList } from "../enums/GroupType";
+import { BudgetType, BudgetTypeValueList } from "../enums/BudgetType";
 import { ITripPlan, TripPlanApi } from "./TripPlanApi";
 
 export class GeminiApi{
@@ -67,18 +67,23 @@ export class GeminiApi{
         const finalPrompt = this.aiPrompt
         .replace("{location}",trip.location)
         .replace("{days_number}", trip.daysNumber)
-        .replace("{group_enum}", trip.group)
-        .replace("{budget_enum}", trip.budget)
+        .replace("{group_enum}", GroupTypeValueList[trip.groupType])
+        .replace("{budget_enum}", BudgetTypeValueList[trip.budgetType])
 
         const result = await this.chatSession.sendMessage(finalPrompt);
-        const tripPlan:ITripPlan = JSON.parse(result.response.text())
+        const tripPlan:ITripPlan = {
+            ...JSON.parse(result.response.text()),
+            ...trip,
+
+        }
         return tripPlan;    
     }
 }
 
 export interface IGeminiTrip{
+    userEmail:string;
     location:string;
     daysNumber:string;
-    group:GroupType;
-    budget:BudgetType;
+    budgetType:BudgetType;
+    groupType:GroupType;
 }

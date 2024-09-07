@@ -35,6 +35,12 @@ export const Header: React.FC = () => {
       if (storedUser) {
         console.log(JSON.parse(storedUser))
         setUser(JSON.parse(storedUser)); 
+
+
+        const imgage = new Image();
+        imgage.src = user?.picture as string;
+        imgage.onload = ()=>setAuthModalShow(false);
+
       }
     }
   }, [authModalShow]);
