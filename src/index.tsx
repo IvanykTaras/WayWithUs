@@ -6,6 +6,7 @@ import './index.css';
 import './App.css';
 import "react-multi-carousel/lib/styles.css";
 import 'react-toastify/dist/ReactToastify.css';
+import '@radix-ui/themes/styles.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CreateTrip } from './components/CreateTrip';
