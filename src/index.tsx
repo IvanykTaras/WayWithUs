@@ -36,7 +36,7 @@ const router = createBrowserRouter([
         element:<CreateTrip/>
       },
       {
-        path:"/trip-view",
+        path:"/trip-view/:trip_plan_id",
         element:<TripView/> 
       },
       {

@@ -13,6 +13,7 @@ import { IGoogleUser } from "../interfaces/IGoogleUser"
 import { MongoClient } from "mongodb"
 import { ITripPlan, TripPlanApi } from "../services/TripPlanApi"
 import { GeminiApi, IGeminiTrip } from "../services/GeminiApi"
+import { useNavigate } from "react-router-dom"
 
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 type FormData = {
@@ -24,6 +25,7 @@ type FormData = {
 
 export const CreateTrip: React.FC = ()=>{
 
+    const navigate = useNavigate();
     const [authModalShow,setAuthModalShow] = useState(true);
     const [user,setUser] = useState<IGoogleUser>();
     const [formData, setFormData] = useState<FormData>({
@@ -49,7 +51,8 @@ export const CreateTrip: React.FC = ()=>{
         }
         console.log("geminiTrip",geminiTrip)
         const tripPlan = await geminiApi.generateTripJson(geminiTrip);
-        await TripPlanApi.create(tripPlan);      
+        const newTripPlan = await TripPlanApi.create(tripPlan);
+        navigate(`/trip-view/${newTripPlan.id}`);
         toast("created") 
     }
 

@@ -6,19 +6,34 @@ export class TripPlanApi {
     private static readonly url: string = "https://localhost:7137/api/TripPlan"; 
 
 
-    static async create(data: ITripPlan){
-        await fetch(this.url, {
-            method: "POST",
-            headers:{
-                "Content-Type": "application/json" 
-             },
-            body: JSON.stringify(data)
-        })
-    }
+    static async create(data: ITripPlan):Promise<ITripPlan>{
+        // await fetch(this.url, {
+        //     method: "POST",
+        //     headers:{
+        //         "Content-Type": "application/json" 
+        //      },
+        //     body: JSON.stringify(data)
+        // })
+        return (await axios.post(this.url, data, {
+          headers:{
+            "Content-Type": "application/json"
+          } 
+        })).data;
+      }
 
     static async get(): Promise<ITripPlan[]>{
       return (await axios.get(this.url)).data;
     }
+
+    static async getByEmail(email:string): Promise<ITripPlan[]>{
+      return (await axios.get(this.url+`/getByEmail?email=${email}`)).data
+    }
+
+    static async getById(id:string): Promise<ITripPlan>{
+      return (await axios.get(this.url+`/${id}`)).data
+    }
+
+    
 }
 
 const testTrip: ITripPlan = {

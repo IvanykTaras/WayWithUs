@@ -5,10 +5,12 @@ import { FaMapLocationDot } from "react-icons/fa6";
 import { IHotel, ITripPlan, TripPlanApi } from "../services/TripPlanApi";
 import { Loadding } from "./custom/Loadding";
 import GoogleApi from "../services/GoogleApi";
+import { useParams } from "react-router-dom";
 
 export const TripView: React.FC = ()=>{
     const [loadding ,setLoadding] = useState<boolean>(true)
     const [tripPlan, setTripPlan] = useState<ITripPlan>();
+    const {trip_plan_id} = useParams();
 
     const responsive = {        
         desktop: {
@@ -20,20 +22,23 @@ export const TripView: React.FC = ()=>{
     useEffect(()=>{
         (async ()=>{
             setLoadding(true)
-                const plan = await TripPlanApi.get();
-                plan[0].hotels.map(async (e)=>{
+                const plan = await TripPlanApi.getById(trip_plan_id as string);
+                plan.hotels.map(async (e)=>{
                     const hotelImages = await GoogleApi.getPhotos(e.name, 400,400);
                     e.image_url = hotelImages[0]
                     return e;
                 })
 
-                for(let i=0; i<plan[0].hotels.length; i++){
-                    const hotelImages = await GoogleApi.getPhotos(plan[0].hotels[i].name, 400,400);
-                    plan[0].hotels[i].image_url = hotelImages[0]
+
+                console.log("location maps url",plan.location,await GoogleApi.getLink(plan.location))
+
+                for(let i=0; i<plan.hotels.length; i++){
+                    const hotelImages = await GoogleApi.getPhotos(plan.hotels[i].name, 400,400);
+                    plan.hotels[i].image_url = hotelImages[0]
                 }
                 
-                setTripPlan(plan[0])
-                console.log(plan[0])
+                setTripPlan(plan)
+                console.log(plan)
             setLoadding(false)
         })()
     },[])

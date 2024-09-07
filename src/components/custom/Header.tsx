@@ -66,9 +66,7 @@ export const Header: React.FC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           {/* <Navbar.Collapse id="basic-navbar-nav"> */}
             <Nav>
-            <Link to={"/trip-view"} style={{ marginRight: "15px" }}>
-                <Button variant="outline-dark">trip view</Button>
-            </Link>
+            {/* navgiation */}
             </Nav>
             <Nav>              
               {!user ? (

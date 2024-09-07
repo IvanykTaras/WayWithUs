@@ -5,21 +5,39 @@ import { Loadding } from "./custom/Loadding";
 import { ITripPlan, TripPlanApi } from "../services/TripPlanApi";
 import { BudgetType } from "../enums/BudgetType";
 import '../index.css';
+import { IGoogleUser } from "../interfaces/IGoogleUser";
 
 export const MyTrips: React.FC = () => {
 
   const [loadding ,setLoadding] = useState<boolean>(true);
+  const [user, setUser] = useState<IGoogleUser | undefined>(); 
   const [tripPlan, setTripPlan] = useState<ITripPlan[]>();
+  
 
   useEffect(()=>{
+
+    const storedUser = sessionStorage.getItem("user");
+    
+
+
     (async ()=>{
         setLoadding(true)
-        const plan = await TripPlanApi.get();
+        
+        const storedUser:IGoogleUser = sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user") as string) : null; 
+        if (storedUser) {
+            console.log("user local storage:",storedUser)
+            setUser(()=>storedUser); 
+        }
+
+        const plan = await TripPlanApi.getByEmail(user?.email as string);
+        console.log("user email",user?.email);
         setTripPlan(plan)
         console.dir(plan)
         setLoadding(false)
     })()
   },[])
+
+  
   return loadding ? <Loadding/> : <>
     <Container className="my-5">
       <h1>My Trips</h1>
