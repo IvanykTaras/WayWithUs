@@ -8,6 +8,11 @@ export default class GoogleApi{
         return (await axios.get(this.url + `/photos?location=${location}&height=${height}&width=${width}`)).data;
     }
 
+    static async getPhoto(location:string, height:number, width:number){
+        const photoes: string[] = await this.getPhotos(location,height,width);
+        return photoes[0];
+    }
+
     static async getLink(location:string):Promise<string>{
         return (await axios.get(this.url + `/link?location=${location}}`)).data;
     }

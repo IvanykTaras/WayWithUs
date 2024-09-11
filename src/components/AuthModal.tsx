@@ -32,7 +32,9 @@ export const AuthModal: React.FC<IProps> = ({show,handleClose})=>{
 
     return <>
         <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton/>
+            <Modal.Header closeButton>
+                <Modal.Title>Sing in</Modal.Title>
+            </Modal.Header>
             <Modal.Footer>
                 <Button variant="dark" style={{width:"100%"}} onClick={()=>auth()}>
                     <FcGoogle style={{marginRight:"1rem",fontSize:"2rem"}}/>Sing In With Google

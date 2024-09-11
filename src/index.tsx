@@ -63,10 +63,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={CLIEND_ID_OAUTH}>
-      <Theme>
-      <RouterProvider router={router}/>
-      </Theme>
+    <GoogleOAuthProvider clientId={CLIEND_ID_OAUTH}>      
+        <RouterProvider router={router}/>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

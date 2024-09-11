@@ -3,15 +3,15 @@ import { Link } from "react-router-dom"
 
 export const Hero: React.FC = ()=>{
     return (<div>
-        <Container className="hero-container">
+        <Container className="hero-container" style={{height:"75vh"}}>
             <h1 className="header">
                 <span className="orange-text">
-                    <b>Discover Your Next Adventure with AI:</b>
+                    <b>Create your trip plan with AI:</b>
                 </span>
-                Personalized Itineraries at Your Fingertips
+                Day by day in entire world!
             </h1>
 
-            <p className="">Your personal trip planner and travel curator, creating custom itineraries tailored to your interests and budget.</p>
+            <p className="">I beliew that work. But that machine doesn't work everytime</p>
 
             <Link to={"/create-trip"}>
                 <Button variant="dark">Get started, It's Free</Button>

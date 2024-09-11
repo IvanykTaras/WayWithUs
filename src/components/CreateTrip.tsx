@@ -1,19 +1,16 @@
-import { useFormik } from "formik"
-import { useEffect, useState } from "react"
-import { Button, Container, Form, FormControlProps } from "react-bootstrap"
+import { useContext, useState } from "react"
+import { Container, Form } from "react-bootstrap"
 import GooglePlacesAutocomplete from "react-google-places-autocomplete"
 import { Option } from "react-google-places-autocomplete/build/types"
-import styled from "styled-components"
 import { BudgetType, BudgetTypeValueList } from "../enums/BudgetType"
 import { GroupType, GroupTypeValueList } from "../enums/GroupType"
 import { apiKeyAndUrl, PLACES_API_KEY } from "../assets/ApiKeys"
 import { toast } from "react-toastify"
-import { AuthModal } from "./AuthModal"
-import { IGoogleUser } from "../interfaces/IGoogleUser"
-import { MongoClient } from "mongodb"
-import { ITripPlan, TripPlanApi } from "../services/TripPlanApi"
+import { TripPlanApi } from "../services/TripPlanApi"
 import { GeminiApi, IGeminiTrip } from "../services/GeminiApi"
 import { useNavigate } from "react-router-dom"
+import { dataContext, DataEnum } from "../App"
+import { Button } from "@radix-ui/themes"
 
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 type FormData = {
@@ -26,43 +23,64 @@ type FormData = {
 export const CreateTrip: React.FC = ()=>{
 
     const navigate = useNavigate();
-    const [authModalShow,setAuthModalShow] = useState(true);
-    const [user,setUser] = useState<IGoogleUser>();
+    const context = useContext(dataContext);
+
     const [formData, setFormData] = useState<FormData>({
         location: null,
         days: 0,
         budget: BudgetType.Cheap,
         group: GroupType.OnePerson
     });
-
     const onDaysChange = (e:React.FormEvent<FormControlElement>)=>{setFormData({...formData, days: Number(e.currentTarget.value) })}
     const onBudgetChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, budget: Number(e.currentTarget.value)   })}
     const onGroupChange = (e:React.FormEvent<HTMLSelectElement>)=>{setFormData({...formData, group: Number(e.currentTarget.value)  })}
 
-    const generateTrip = async ()=>{
-        toast("start creating")
-        const geminiApi = new GeminiApi(apiKeyAndUrl.GEMINI_API_KEY);
-        const geminiTrip:IGeminiTrip = {
-            userEmail: user?.email as string,
-            location: formData.location?.label as string,
-            daysNumber: formData.days.toString(),
-            groupType: formData.group,
-            budgetType: formData.budget
-        }
-        console.log("geminiTrip",geminiTrip)
-        const tripPlan = await geminiApi.generateTripJson(geminiTrip);
-        const newTripPlan = await TripPlanApi.create(tripPlan);
-        navigate(`/trip-view/${newTripPlan.id}`);
-        toast("created") 
-    }
 
-    useEffect(()=>{
-        const user = sessionStorage.getItem("user")
-        if(user){
-            setUser(JSON.parse(user))
-            setAuthModalShow(false)
+
+    
+
+
+    const generateTrip = async ()=>{
+        context[DataEnum.Loadding].set(true)
+        if(context[DataEnum.User].value){
+            try {
+                toast.info("start creating");
+                await toast.promise(
+                    (async ()=>{
+                        const geminiApi = new GeminiApi(apiKeyAndUrl.GEMINI_API_KEY);
+                    
+                    const geminiTrip:IGeminiTrip = {
+                        userEmail: context[DataEnum.User].value.email as string,
+                        location: formData.location?.label as string,
+                        daysNumber: formData.days.toString(),
+                        groupType: formData.group,
+                        budgetType: formData.budget
+                    }
+        
+                    const tripPlan = await geminiApi.generateTripJson(geminiTrip);
+                    
+                    const newTripPlan = await TripPlanApi.create(tripPlan);
+                    
+                    navigate(`/trip-view/${newTripPlan.id}`);
+                    
+                    }),
+                    {
+                    pending: 'creating trip pending',
+                    success: 'Trip created 👌',
+                    error: 'Promise rejected 🤯'
+                    }
+                )
+                
+                
+                toast.info("created") 
+            } catch (error) {
+                toast.error("some input is empty")
+            }
+        }else{
+            context[DataEnum.IsUser].set(!context[DataEnum.IsUser].value);
         }
-    },[authModalShow])
+        context[DataEnum.Loadding].set(false)
+    }
 
     return <div>
         <Container className="create-trip">
@@ -82,7 +100,7 @@ export const CreateTrip: React.FC = ()=>{
                 />
                 
                 <h2 className="title">How many days are you planning your trip?</h2>
-                <Form.Control type="number" placeholder="Example: 3" onChange={onDaysChange} />
+                <Form.Control type="number" min={1} max={3}  placeholder="Example: 3" onChange={onDaysChange} />
 
                 <h2 className="title">What is Your Budget?</h2>
                 <Form.Select aria-label="Default select example" onChange={onBudgetChange}>
@@ -94,7 +112,14 @@ export const CreateTrip: React.FC = ()=>{
                     {(GroupTypeValueList).map((e,i)=>(<option value={i}>{e}</option>))}
                 </Form.Select>
                 
-                <Button className="button" onClick={()=>generateTrip()}>create trip</Button>
+                <Button 
+                    className="button"
+                    color="iris"
+                    onClick={()=>generateTrip()}
+                    loading={context[DataEnum.Loadding].value}
+                    >
+                    create trip
+                </Button>
             </div>
         </Container>
     </div>

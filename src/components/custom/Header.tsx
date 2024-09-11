@@ -1,50 +1,42 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Container, Nav, Navbar, Dropdown, Card } from "react-bootstrap";
-import { LogoSVG } from "../../assets/LogoSVG";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthModal } from "../AuthModal";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { Box, Flex, Avatar,Text } from "@radix-ui/themes";
+import { dataContext, DataEnum } from "../../App";
+import { LogoSVG } from "../../assets/LogoSVG";
 
 export const Header: React.FC = () => {
-  const [authModalShow, setAuthModalShow] = useState(false); 
-  const [user, setUser] = useState<IGoogleUser | undefined>(); 
+  const context = useContext(dataContext);
   const navigate = useNavigate(); 
 
   
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser)); 
+      context[DataEnum.User].set(JSON.parse(storedUser));
     }
   }, []);
 
-  const handleSignInClick = () => {
-    setAuthModalShow(true); 
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("user"); 
-    setUser(undefined); 
-    navigate("/"); 
-  };
-
- 
   useEffect(() => {
-    if (!authModalShow) {
+    if (!context[DataEnum.AuthModalShow].value) {
       const storedUser = sessionStorage.getItem("user");
       if (storedUser) {
-        console.log(JSON.parse(storedUser))
-        setUser(JSON.parse(storedUser)); 
-
-
-        const imgage = new Image();
-        imgage.src = user?.picture as string;
-        imgage.onload = ()=>setAuthModalShow(false);
+        context[DataEnum.User].set(JSON.parse(storedUser)); 
 
       }
     }
-  }, [authModalShow]);
+  }, [context[DataEnum.AuthModalShow].value]);
+
+  const handleSignInClick = () => {
+    context[DataEnum.AuthModalShow].set(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    context[DataEnum.User].set(undefined);  
+    navigate("/"); 
+  };
 
   return (
     <>      
@@ -56,23 +48,23 @@ export const Header: React.FC = () => {
         `}
       </style>
 
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="bg-body-tertiary"  > {/*data-bs-theme="dark"*/}
         <Container>
           <Navbar.Brand>
             <Link to={"/"}>
-              <LogoSVG />
+              <LogoSVG/>
             </Link>
           </Navbar.Brand>
           
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           {/* <Navbar.Collapse id="basic-navbar-nav"> */}
             <Nav>
-              <Link to={"/theme"}>
+              {/* <Link to={"/theme"}>
                 <Button variant="outline-dark">Theme</Button>
-              </Link>
+              </Link> */}
             </Nav>
             <Nav style={{alignItems:"center"}}>              
-              {!user ? (
+              {!context[DataEnum.User].value ? (
                 <Button variant="dark" onClick={handleSignInClick}>
                   Sign in
                 </Button>
@@ -101,21 +93,21 @@ export const Header: React.FC = () => {
                           height: "40px",
                         }}
                       /> */}
-                      <Box width="300px">
+                      <Box  width="300px">
                         <Card style={{padding:".5rem"}}>
                           <Flex gap="3" align="center">
                             <Avatar
                               size="3"
-                              src={user.picture}
+                              src={context[DataEnum.User].value.picture}
                               radius="full"
                               fallback="T"
                             />
                             <Box>
                               <Text as="div" size="2" weight="bold">
-                                {user.name}
+                                {context[DataEnum.User].value.name}
                               </Text>
                               <Text as="div" size="2" color="gray">
-                                {user.email}
+                                {context[DataEnum.User].value.email}
                               </Text>
                             </Box>
                           </Flex>
@@ -132,10 +124,6 @@ export const Header: React.FC = () => {
           {/* </Navbar.Collapse> */}
         </Container>
       </Navbar>
-      <AuthModal
-        show={authModalShow}
-        handleClose={() => setAuthModalShow(false)}
-      />
     </>
   );
 };
