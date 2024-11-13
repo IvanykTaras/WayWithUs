@@ -31,7 +31,6 @@ export interface CityPlan {
   endDate: string;
   originLocation: string;
   destiantionLocation: string;
-  descriptionLocation: string;
   image_url: ImageUrl;
   transport: Transport;
   hotels: Hotel[];
