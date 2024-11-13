@@ -15,10 +15,11 @@ import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { CLIEND_ID_OAUTH } from './assets/ApiKeys';
 import { Hero } from './components/custom/Hero';
-import { TripView } from './components/TripVIew';
+// import { TripView } from './components/TripVIew';
 import { MyTrips } from './components/MyTrips';
 import { MyTheme } from './components/MyTheme';
 import { Theme } from '@radix-ui/themes';
+import TripPlanForm from './components/custom/TripPlanForm';
 
 
 
@@ -35,16 +36,17 @@ const router = createBrowserRouter([
       },     
       {
         path:"/create-trip",
-        element:<CreateTrip/>
+        element: <TripPlanForm/>
+        // element:<CreateTrip/>
       },
-      {
-        path:"/trip-view/:trip_plan_id",
-        element:<TripView/> 
-      },
-      {
-        path:"/my-trips",
-        element:<MyTrips/>
-      },
+      // {
+      //   path:"/trip-view/:trip_plan_id",
+      //   element:<TripView/> 
+      // },
+      // {
+      //   path:"/my-trips",
+      //   element:<MyTrips/>
+      // },
       {
         path:"/theme",
         element: <MyTheme/>

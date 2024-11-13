@@ -8,6 +8,7 @@ import { AuthModal } from './components/AuthModal';
 import { Value } from '@radix-ui/themes/dist/cjs/components/data-list';
 import { IGoogleUser } from './interfaces/IGoogleUser';
 import { Footer } from './components/custom/Footer';
+import TravelForm from './components/TravelForm';
 
 export const dataContext = createContext<Array<{value:any,set:any}>>([]);
 
@@ -61,6 +62,7 @@ function App() {
         <ToastContainer />
         <Header/>
         <Outlet/>
+        {/* <TravelForm/> */}
         <AuthModal
           show={authModalShow}
           handleClose={() => setAuthModalShow(false)}

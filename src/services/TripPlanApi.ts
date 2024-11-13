@@ -1,12 +1,14 @@
 import axios from "axios";
 import { BudgetType } from "../enums/BudgetType";
 import { GroupType } from "../enums/GroupType";
+import { GenderParticipants } from "../enums/GenderParticipants";
+import { Transport, TripPlan } from "../interfaces/TripPlan";
 
 export class TripPlanApi {
     private static readonly url: string = "https://localhost:7137/api/TripPlan"; 
 
 
-    static async create(data: ITripPlan):Promise<ITripPlan>{
+    static async create(data: TripPlan):Promise<TripPlan>{
         // await fetch(this.url, {
         //     method: "POST",
         //     headers:{
@@ -14,6 +16,7 @@ export class TripPlanApi {
         //      },
         //     body: JSON.stringify(data)
         // })
+        
         return (await axios.post(this.url, data, {
           headers:{
             "Content-Type": "application/json"
@@ -21,88 +24,82 @@ export class TripPlanApi {
         })).data;
       }
 
-    static async get(): Promise<ITripPlan[]>{
+    static async get(): Promise<TripPlan[]>{
       return (await axios.get(this.url)).data;
     }
 
-    static async getByEmail(email:string): Promise<ITripPlan[]>{
+    static async getByEmail(email:string): Promise<TripPlan[]>{
       return (await axios.get(this.url+`/getByEmail?email=${email}`)).data
     }
 
-    static async getById(id:string): Promise<ITripPlan>{
+    static async getById(id:string): Promise<TripPlan>{
       return (await axios.get(this.url+`/${id}`)).data
     }
 
     
 }
 
-const testTrip: ITripPlan = {
-  "location": "somelocation",
-  "userEmail": "some@some.som",
-  "daysNumber": 0,
-  "budgetType": BudgetType.Cheap,
-  "groupType": GroupType.OnePerson,
-  "hotels": [
+
+export const testTripPlan: TripPlan = {
+  "userId": "66e337245e26008a2f5331d6",
+  "title": "string",
+  "description": "string",
+  "startDate": "2024-11-12",
+  "endDate": "2024-11-12",
+  "cityPlans": [
     {
-      "name": "testFront",
-      "address": "string",
-      "price": "string",
-      "image_url": "string",
-      "geo_coordinates": "string",
-      "rating": "string",
-      "description": "string"
-    }
-  ],
-  "itinerary": [
-    {
-      "day": 0,
-      "places": [
+      "startDate": "2024-11-12",
+      "endDate": "2024-11-12",
+      "originLocation": "string",
+      "descriptionLocation": "string",
+      "image_url": {
+        "originUrl": "string",
+        "destinationUrl": "string"
+      },
+      "transport": 0,
+      "hotels": [
         {
-          "time": "string",
-          "location": "string",
-          "details": "string",
+          "name": "string",
+          "address": "string",
+          "price": "string",
           "image_url": "string",
           "geo_coordinates": "string",
-          "ticket_pricing": "string",
-          "rating": "string"
+          "rating": "string",
+          "description": "string",
+          "googleMapUrl": "string"
+        }
+      ],
+      "itinerary": [
+        {
+          "day": 0,
+          "places": [
+            {
+              "time": "string",
+              "location": "string",
+              "details": "string",
+              "image_url": "string",
+              "geo_coordinates": "string",
+              "ticket_pricing": "string",
+              "rating": "string",
+              "googleMapUrl": "string"
+            }
+          ]
         }
       ]
     }
   ],
-}
+  "languages": [
+    "string"
+  ],
+  "age": {
+    "min": 0,
+    "max": 0
+  },
+  "genderParticipants": 0,
+  "withChildren": true,
+  "budget": 0,
+  "budgetType": 0,
+  "groupType": 0,
+  "typeTravel": "string"
+};
 
-export interface ITripPlan{
-    id?: string
-    userEmail: string
-    location: string
-    daysNumber: number
-    budgetType: BudgetType
-    groupType: GroupType
-    hotels: Array<IHotel>
-    itinerary: Array<IItinerary>
-}
-
-export interface IHotel{
-     name:string;
-     address:string;
-     price:string;
-     image_url:string;
-     geo_coordinates:string;
-     rating:string;
-     description:string;
-}
-
-export interface IItinerary{
-    day: number;
-    places: Array<IPlace>
-}
-
-export interface IPlace{
-    time:string;
-    location:string;
-    details:string;
-    image_url:string;
-    geo_coordinates:string;
-    ticket_pricing:string;
-    rating:string;
-}

@@ -1,8 +1,8 @@
 import {GoogleGenerativeAI,HarmCategory,HarmBlockThreshold,ChatSession} from "@google/generative-ai"
 import { GroupType, GroupTypeValueList } from "../enums/GroupType";
 import { BudgetType, BudgetTypeValueList } from "../enums/BudgetType";
-import { ITripPlan, TripPlanApi } from "./TripPlanApi";
-
+import { TripPlanApi } from "./TripPlanApi";
+import { TripPlan } from "../interfaces/TripPlan";
 export class GeminiApi{
     private chatSession: ChatSession;
     private readonly aiPrompt = `Generate Travel Plan for Location: {location}, for {days_number} Days for {group_enum} with a {budget_enum} budget,Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, rating, Time travel each of the location for 3 days with each day plan with best time to visit in JSON format. json format sample
@@ -63,7 +63,7 @@ export class GeminiApi{
         });
     }
 
-    async generateTripJson(trip:IGeminiTrip):Promise<ITripPlan>{
+    async generateTripJson(trip:IGeminiTrip):Promise<TripPlan>{
         const finalPrompt = this.aiPrompt
         .replace("{location}",trip.location)
         .replace("{days_number}", trip.daysNumber)
@@ -71,7 +71,7 @@ export class GeminiApi{
         .replace("{budget_enum}", BudgetTypeValueList[trip.budgetType])
 
         const result = await this.chatSession.sendMessage(finalPrompt);
-        const tripPlan:ITripPlan = {
+        const tripPlan:TripPlan = {
             ...JSON.parse(result.response.text()),
             ...trip,
 

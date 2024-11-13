@@ -5,6 +5,7 @@ import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { Box, Flex, Avatar,Text } from "@radix-ui/themes";
 import { dataContext, DataEnum } from "../../App";
 import { LogoSVG } from "../../assets/LogoSVG";
+import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
 
 export const Header: React.FC = () => {
   const context = useContext(dataContext);
@@ -37,6 +38,11 @@ export const Header: React.FC = () => {
     context[DataEnum.User].set(undefined);  
     navigate("/"); 
   };
+
+
+  async function createTripTest(){
+    await TripPlanApi.create(testTripPlan);
+  }
 
   return (
     <>      
@@ -76,6 +82,8 @@ export const Header: React.FC = () => {
                   <Link to={"/my-trips"} style={{ marginRight: "15px" }}>
                     <Button variant="outline-dark">My Trips</Button>
                   </Link>
+
+                  <Button variant="outline-dark" onClick={()=>createTripTest()}>Create Trip Test</Button>
 
                   <Dropdown align="end">
                     <Dropdown.Toggle
