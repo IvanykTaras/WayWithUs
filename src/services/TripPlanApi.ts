@@ -44,13 +44,14 @@ export const testTripPlan: TripPlan = {
   "userId": "66e337245e26008a2f5331d6",
   "title": "string",
   "description": "string",
-  "startDate": "2024-11-12",
-  "endDate": "2024-11-12",
+  "startDate": "2024-11-13T22:34:10.971Z",
+  "endDate": "2024-11-13T22:34:10.971Z",
   "cityPlans": [
     {
-      "startDate": "2024-11-12",
-      "endDate": "2024-11-12",
+      "startDate": "2024-11-13T22:34:10.971Z",
+      "endDate": "2024-11-13T22:34:10.971Z",
       "originLocation": "string",
+      "destiantionLocation": "string",
       "descriptionLocation": "string",
       "image_url": {
         "originUrl": "string",
@@ -100,6 +101,7 @@ export const testTripPlan: TripPlan = {
   "budget": 0,
   "budgetType": 0,
   "groupType": 0,
-  "typeTravel": "string"
+  "typeTravel": "string",
+  "participantsFromOtherCountries": true
 };
 

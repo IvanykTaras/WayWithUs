@@ -18,6 +18,7 @@ export interface TripPlan {
   budgetType: BudgetType;
   groupType: GroupType;
   typeTravel: string;
+  participantsFromOtherCountries: boolean;
 }
 
 export interface Age {
@@ -29,6 +30,7 @@ export interface CityPlan {
   startDate: string;
   endDate: string;
   originLocation: string;
+  destiantionLocation: string;
   descriptionLocation: string;
   image_url: ImageUrl;
   transport: Transport;
