@@ -53,14 +53,44 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
 
   const handleAddCity = () => {
     const newCityPlan: CityPlan = {
-      startDate: '',
-      endDate: '',
-      originLocation: '',
-      destiantionLocation: '',
-      image_url: { originUrl: '', destinationUrl: '' },
-      transport: null as any, // Пустое значение для транспорта
-      hotels: [],
-      itinerary: [],
+      startDate: "2024-11-14T21:54:24.737Z",
+      endDate: "2024-11-14T21:54:24.737Z",
+      originLocation: "string",
+      destiantionLocation: "",
+      image_url: {
+        originUrl: "string",
+        destinationUrl: "string"
+      },
+      transport: null,
+      hotels: [
+        {
+          name: "string",
+          address: "string",
+          price: "string",
+          image_url: "string",
+          geo_coordinates: "string",
+          rating: "string",
+          description: "string",
+          googleMapUrl: "string"
+        }
+      ],
+      itinerary: [
+        {
+          day: 0,
+          places: [
+            {
+              time: "string",
+              location: "string",
+              details: "string",
+              image_url: "string",
+              geo_coordinates: "string",
+              ticket_pricing: "string",
+              rating: "string",
+              googleMapUrl: "string"
+            }
+          ]
+        }
+      ]
     };
 
     const updatedCityPlans = [...dataTripPlan.data.cityPlans, newCityPlan];
@@ -72,8 +102,8 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
     dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
   };
 
-  return (
-    <Container className="p-4" style={{ maxWidth: '500px' }}>
+  return (<>
+    
       {dataTripPlan.data.cityPlans.map((cityPlan, index) => (
         <div key={index} className="mb-4">
           {/* Cities Input */}
@@ -147,8 +177,8 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
           <Button variant="primary">Next</Button>
         </Col>
       </Row>
-    </Container>
-  );
+    
+      </>);
 };
 
 export default CitiesPlanForm;

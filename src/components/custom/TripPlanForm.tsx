@@ -10,13 +10,30 @@ const TripPlanForm = () => {
 
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(testTripPlan);
   const [dataCitiesPlan, setDataCitiesPlan] = useState<TripPlan>(testTripPlan);
+  const [activeTab, setActiveTab] = useState<string>('general');
 
   const generateTripPlan = async () => {
     await TripPlanApi.create(dataTripPlan)
   }
 
+  const handlePrev = () => {
+    const tabOrder = ['general', 'trip', 'details1', 'details2'];
+    const currentIndex = tabOrder.indexOf(activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabOrder[currentIndex - 1]);
+    }
+  };
+
+  const handleNext = () => {
+    const tabOrder = ['general', 'trip', 'details1', 'details2'];
+    const currentIndex = tabOrder.indexOf(activeTab);
+    if (currentIndex < tabOrder.length - 1) {
+      setActiveTab(tabOrder[currentIndex + 1]);
+    }
+  };
+
   return (
-    <Container className="py-4">
+    <Container className="py-4" style={{maxWidth:800,padding:0}}>
       {/* Top Navigation */}
       <Nav className="justify-content-center mb-4">
         <Nav.Item>
@@ -37,7 +54,7 @@ const TripPlanForm = () => {
       </Nav>
 
       {/* Tab Navigation */}
-      <Tabs defaultActiveKey="general" id="trip-form-tabs" className="mb-4">
+      <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k || 'general')} id="trip-form-tabs" className="mb-4">
         <Tab eventKey="general" title="General Information">
             <GeneralInformationForm dataTripPlan = {{data:dataTripPlan, set: (e:TripPlan)=>setDataTripPlan(e)}} />
         </Tab>
@@ -50,6 +67,15 @@ const TripPlanForm = () => {
         </Tab>
         <Tab eventKey="details2" title="Details about city 2" />
       </Tabs>
+
+      <Row className="justify-content-between">
+        <Col xs="auto">
+          <Button variant="primary" onClick={handlePrev} disabled={activeTab === 'general'}>Prev</Button>
+        </Col>
+        <Col xs="auto">
+          <Button variant="primary" onClick={handleNext} disabled={activeTab === 'details2'}>Next</Button>
+        </Col>
+      </Row>
 
       <Button variant="success" className="w-100 mt-2" onClick={()=>generateTripPlan()}>Save</Button>
       
