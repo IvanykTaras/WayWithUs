@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Button, Form, Popover, OverlayTrigger } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, Popover, OverlayTrigger, ButtonGroup } from 'react-bootstrap';
 import { FaBus, FaCar, FaTrain, FaPlane, FaShip, FaBicycle, FaWalking } from 'react-icons/fa';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
@@ -53,40 +53,40 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
 
   const handleAddCity = () => {
     const newCityPlan: CityPlan = {
-      "startDate": "2024-11-14T21:54:24.737Z",
-      "endDate": "2024-11-14T21:54:24.737Z",
-      "originLocation": "string",
-      "destiantionLocation": "",
-      "image_url": {
-        "originUrl": "string",
-        "destinationUrl": "string"
+      startDate: "2024-11-14T21:54:24.737Z",
+      endDate: "2024-11-14T21:54:24.737Z",
+      originLocation: "string",
+      destiantionLocation: "",
+      image_url: {
+        originUrl: "string",
+        destinationUrl: "string"
       },
-      "transport": null,
-      "hotels": [
+      transport: null,
+      hotels: [
         {
-          "name": "string",
-          "address": "string",
-          "price": "string",
-          "image_url": "string",
-          "geo_coordinates": "string",
-          "rating": "string",
-          "description": "string",
-          "googleMapUrl": "string"
+          name: "string",
+          address: "string",
+          price: "string",
+          image_url: "string",
+          geo_coordinates: "string",
+          rating: "string",
+          description: "string",
+          googleMapUrl: "string"
         }
       ],
-      "itinerary": [
+      itinerary: [
         {
-          "day": 0,
-          "places": [
+          day: 0,
+          places: [
             {
-              "time": "string",
-              "location": "string",
-              "details": "string",
-              "image_url": "string",
-              "geo_coordinates": "string",
-              "ticket_pricing": "string",
-              "rating": "string",
-              "googleMapUrl": "string"
+              time: "string",
+              location: "string",
+              details: "string",
+              image_url: "string",
+              geo_coordinates: "string",
+              ticket_pricing: "string",
+              rating: "string",
+              googleMapUrl: "string"
             }
           ]
         }
@@ -97,8 +97,13 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
     dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
   };
 
-  return (
-    <Container className="p-4" style={{ maxWidth: '500px' }}>
+  const handleDeleteCity = (index: number) => {
+    const updatedCityPlans = dataTripPlan.data.cityPlans.filter((_, i) => i !== index);
+    dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
+  };
+
+  return (<>
+    
       {dataTripPlan.data.cityPlans.map((cityPlan, index) => (
         <div key={index} className="mb-4">
           {/* Cities Input */}
@@ -110,42 +115,51 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
                 onChange: (value) => handleCityChange(value, index),
               }}
             />
+            <ButtonGroup className='w-100 d-flex align-items-center my-2'>
+              {/* Delete City Button */}
+            <Button variant="danger" className="w-100" onClick={() => handleDeleteCity(index)}>
+              Delete city
+            </Button>
+            {/* Transport Selector */}
+            {index < dataTripPlan.data.cityPlans.length - 1 && (
+              <OverlayTrigger
+                trigger="click"
+                placement="bottom"
+                overlay={
+                  <Popover id={`popover-transport-${index}`}>
+                    <Popover.Body className="d-flex justify-content-between">
+                      {transportOptions.map((option, i) => (
+                        <Button
+                          key={i}
+                          variant="link"
+                          className="text-dark"
+                          onClick={() => handleTransportChange(option.value, index)}
+                        >
+                          {option.icon}
+                        </Button>
+                      ))}
+                    </Popover.Body>
+                  </Popover>
+                }
+              >
+                <Button variant="primary" className="w-100">
+                  {cityPlan.transport !== null ? (
+                    <>
+                      Transport: {transportOptions.find(option => option.value === cityPlan.transport)?.icon}{' '}
+                      {Transport[cityPlan.transport]}
+                    </>
+                  ) : (
+                    'Choose transport'
+                  )}
+                </Button>
+              </OverlayTrigger>
+            )}
+            </ButtonGroup>
           </Form.Group>
 
-          {/* Transport Selector */}
-          {index < dataTripPlan.data.cityPlans.length - 1 && (
-            <OverlayTrigger
-              trigger="click"
-              placement="bottom"
-              overlay={
-                <Popover id={`popover-transport-${index}`}>
-                  <Popover.Body className="d-flex justify-content-between">
-                    {transportOptions.map((option, i) => (
-                      <Button
-                        key={i}
-                        variant="link"
-                        className="text-dark"
-                        onClick={() => handleTransportChange(option.value, index)}
-                      >
-                        {option.icon}
-                      </Button>
-                    ))}
-                  </Popover.Body>
-                </Popover>
-              }
-            >
-              <Button variant="primary" className="w-100 mb-3">
-                {cityPlan.transport !== null ? (
-                  <>
-                    Transport: {transportOptions.find(option => option.value === cityPlan.transport)?.icon}{' '}
-                    {Transport[cityPlan.transport]}
-                  </>
-                ) : (
-                  'Choose transport'
-                )}
-              </Button>
-            </OverlayTrigger>
-          )}
+          
+
+          
         </div>
       ))}
 
@@ -163,8 +177,8 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
           <Button variant="primary">Next</Button>
         </Col>
       </Row>
-    </Container>
-  );
+    
+      </>);
 };
 
 export default CitiesPlanForm;

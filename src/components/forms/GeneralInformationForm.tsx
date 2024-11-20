@@ -40,8 +40,7 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
     });
   };
   
-  return (
-    <Container className="p-4" style={{ maxWidth: '700px' }}>
+  return (<>
       <Form>
         <Form.Group controlId="tripTitle" className="mb-3">
           <Form.Label>Trip Title</Form.Label>
@@ -238,7 +237,7 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
           Next
         </Button>
       </Form>
-    </Container>
+    </>
   );
 };
 
