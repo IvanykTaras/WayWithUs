@@ -1,63 +1,128 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Col, Button, Form, Popover, OverlayTrigger } from 'react-bootstrap';
-import { FaBus, FaCar, FaTrain, FaPlane, FaShip } from 'react-icons/fa';
+import { FaBus, FaCar, FaTrain, FaPlane, FaShip, FaBicycle, FaWalking } from 'react-icons/fa';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import { PLACES_API_KEY } from "../../assets/ApiKeys";
+import { TripPlan, CityPlan, Transport } from '../../interfaces/TripPlan';
 
-const CitiesPlanForm = () => {
-  const [selectedTransport, setSelectedTransport] = useState<string>("");
+interface ICitiesPlanForm {
+  dataTripPlan: {
+    data: TripPlan;
+    set: (e: TripPlan) => void;
+  };
+}
 
+const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
   const transportOptions = [
-    { icon: <FaBus />, label: 'Bus' },
-    { icon: <FaCar />, label: 'Car' },
-    { icon: <FaTrain />, label: 'Train' },
-    { icon: <FaPlane />, label: 'Airplane' },
-    { icon: <FaShip />, label: 'Boat' },
+    { icon: <FaBus />, label: 'Bus', value: Transport.Bus },
+    { icon: <FaCar />, label: 'Car', value: Transport.Car },
+    { icon: <FaTrain />, label: 'Train', value: Transport.Train },
+    { icon: <FaPlane />, label: 'Airplane', value: Transport.AirPlain },
+    { icon: <FaShip />, label: 'Boat', value: Transport.Ship },
+    { icon: <FaBicycle />, label: 'Bicycle', value: Transport.Bicycle },
+    { icon: <FaWalking />, label: 'Walk', value: Transport.OnFeet },
   ];
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Body className="d-flex justify-content-between">
-        {transportOptions.map((option, index) => (
-          <Button
-            key={index}
-            variant="link"
-            className="text-dark"
-            onClick={() => setSelectedTransport(option.label)}
-          >
-            {option.icon}
-          </Button>
-        ))}
-      </Popover.Body>
-    </Popover>
-  );
+  const handleCityChange = (value: any, index: number) => {
+    const updatedCityPlans = dataTripPlan.data.cityPlans.map((cityPlan, i) => {
+      if (i === index) {
+        return {
+          ...cityPlan,
+          originLocation: value?.label || '',
+        };
+      }
+      return cityPlan;
+    });
+
+    dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
+  };
+
+  const handleTransportChange = (transport: Transport, index: number) => {
+    const updatedCityPlans = dataTripPlan.data.cityPlans.map((cityPlan, i) => {
+      if (i === index) {
+        return {
+          ...cityPlan,
+          transport,
+        };
+      }
+      return cityPlan;
+    });
+
+    dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
+  };
+
+  const handleAddCity = () => {
+    const newCityPlan: CityPlan = {
+      startDate: '',
+      endDate: '',
+      originLocation: '',
+      destiantionLocation: '',
+      image_url: { originUrl: '', destinationUrl: '' },
+      transport: null as any, // Пустое значение для транспорта
+      hotels: [],
+      itinerary: [],
+    };
+
+    const updatedCityPlans = [...dataTripPlan.data.cityPlans, newCityPlan];
+    dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
+  };
 
   return (
     <Container className="p-4" style={{ maxWidth: '500px' }}>
-      {/* Cities From Input */}
-      <Form.Group controlId="citiesFrom" className="mb-3">
-        <Form.Control type="text" placeholder="Cities from" />
-      </Form.Group>
+      {dataTripPlan.data.cityPlans.map((cityPlan, index) => (
+        <div key={index} className="mb-4">
+          {/* Cities Input */}
+          <Form.Group controlId={`citiesFrom-${index}`} className="mb-3">
+            <GooglePlacesAutocomplete
+              apiKey={PLACES_API_KEY}
+              selectProps={{
+                placeholder: index === 0 ? 'Cities From' : `Cities To ${index}`,
+                onChange: (value) => handleCityChange(value, index),
+              }}
+            />
+          </Form.Group>
 
-      {/* Choose Transport Button */}
-      <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-        <Button variant="primary" className="w-100 mb-3">
-          {selectedTransport ? (
-            <>
-              Transport: {transportOptions.find(option => option.label === selectedTransport)?.icon} {selectedTransport}
-            </>
-          ) : (
-            'Choose transport'
-          )}{' '}
-          <span className="float-right">&#9776;</span>
-        </Button>
-      </OverlayTrigger>
-
-      {/* Cities To Input */}
-      <Form.Group controlId="citiesTo" className="mb-3">
-        <Form.Control type="text" placeholder="Cities to" />
-      </Form.Group>
+          {/* Transport Selector */}
+          {index < dataTripPlan.data.cityPlans.length - 1 && (
+            <OverlayTrigger
+              trigger="click"
+              placement="bottom"
+              overlay={
+                <Popover id={`popover-transport-${index}`}>
+                  <Popover.Body className="d-flex justify-content-between">
+                    {transportOptions.map((option, i) => (
+                      <Button
+                        key={i}
+                        variant="link"
+                        className="text-dark"
+                        onClick={() => handleTransportChange(option.value, index)}
+                      >
+                        {option.icon}
+                      </Button>
+                    ))}
+                  </Popover.Body>
+                </Popover>
+              }
+            >
+              <Button variant="primary" className="w-100 mb-3">
+                {cityPlan.transport !== null ? (
+                  <>
+                    Transport: {transportOptions.find(option => option.value === cityPlan.transport)?.icon}{' '}
+                    {Transport[cityPlan.transport]}
+                  </>
+                ) : (
+                  'Choose transport'
+                )}
+              </Button>
+            </OverlayTrigger>
+          )}
+        </div>
+      ))}
 
       {/* Add City Button */}
-      <Button variant="primary" className="w-100 mb-4">Add city</Button>
+      <Button variant="primary" className="w-100 mb-4" onClick={handleAddCity}>
+        Add city
+      </Button>
 
       {/* Prev and Next Buttons */}
       <Row className="justify-content-between">

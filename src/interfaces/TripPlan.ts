@@ -7,8 +7,8 @@ export interface TripPlan {
   userId: string;
   title: string;
   description: string;
-  startDate?: string | null;
-  endDate?: string | null;
+  startDate: string | null ;
+  endDate: string | null;
   cityPlans: CityPlan[];
   languages: string[];
   age: Age;
@@ -16,7 +16,7 @@ export interface TripPlan {
   withChildren: boolean;
   budget: number;
   budgetType: BudgetType;
-  groupType: GroupType;
+  groupType: number;
   typeTravel: string;
   participantsFromOtherCountries: boolean;
 }
@@ -30,9 +30,9 @@ export interface CityPlan {
   startDate: string;
   endDate: string;
   originLocation: string;
-  destiantionLocation: string;
+  destiantionLocation: string | null;
   image_url: ImageUrl;
-  transport: Transport;
+  transport: Transport | null; 
   hotels: Hotel[];
   itinerary: Itinerary[];
 }

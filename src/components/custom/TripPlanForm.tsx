@@ -3,13 +3,13 @@ import { Container, Nav, Tabs, Tab, Form, Button, Row, Col } from 'react-bootstr
 import GeneralInformationForm from '../forms/GeneralInformationForm';
 import CitiesPlanForm from '../forms/CitiesPlanForm';
 import CityDetailsForm from '../forms/CityDetailsForm';
-import { TripPlan } from '../../interfaces/TripPlan';
+import { CityPlan, TripPlan } from '../../interfaces/TripPlan';
 import { testTripPlan, TripPlanApi } from '../../services/TripPlanApi';
 
 const TripPlanForm = () => {
 
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(testTripPlan);
-  
+  const [dataCitiesPlan, setDataCitiesPlan] = useState<TripPlan>(testTripPlan);
 
   const generateTripPlan = async () => {
     await TripPlanApi.create(dataTripPlan)
@@ -42,7 +42,8 @@ const TripPlanForm = () => {
             <GeneralInformationForm dataTripPlan = {{data:dataTripPlan, set: (e:TripPlan)=>setDataTripPlan(e)}} />
         </Tab>
         <Tab eventKey="trip" title="Trip">
-          <CitiesPlanForm/>
+        <CitiesPlanForm dataTripPlan={{ data: dataTripPlan, set: setDataTripPlan }} />
+
         </Tab>
         <Tab eventKey="details1" title="Details about city 1">
           <CityDetailsForm/>

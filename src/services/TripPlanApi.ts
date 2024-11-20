@@ -5,51 +5,61 @@ import { GenderParticipants } from "../enums/GenderParticipants";
 import { Transport, TripPlan } from "../interfaces/TripPlan";
 
 export class TripPlanApi {
-    private static readonly url: string = "https://localhost:7137/api/TripPlan"; 
+  private static readonly url: string = "https://localhost:7137/api/TripPlan"; 
 
 
-    static async create(data: TripPlan):Promise<TripPlan>{
-        // await fetch(this.url, {
-        //     method: "POST",
-        //     headers:{
-        //         "Content-Type": "application/json" 
-        //      },
-        //     body: JSON.stringify(data)
-        // })
-        
-        return (await axios.post(this.url, data, {
-          headers:{
-            "Content-Type": "application/json"
-          } 
-        })).data;
-      }
+  private static addOneDay(date: string | null): string | null {
+      if (!date) return null;
+      const d = new Date(date);
+      d.setDate(d.getDate() + 1); 
+      return d.toISOString().split("T")[0]; 
+  }
 
-    static async get(): Promise<TripPlan[]>{
-      return (await axios.get(this.url)).data;
-    }
+  static async create(data: TripPlan): Promise<TripPlan> {
+      const preparedData = {
+          ...data,
+          startDate: this.addOneDay(data.startDate),
+          endDate: this.addOneDay(data.endDate),
+          cityPlans: data.cityPlans.map(cityPlan => ({
+              ...cityPlan,
+              startDate: this.addOneDay(cityPlan.startDate),
+              endDate: this.addOneDay(cityPlan.endDate),
+          })),
+      };
 
-    static async getByEmail(email:string): Promise<TripPlan[]>{
-      return (await axios.get(this.url+`/getByEmail?email=${email}`)).data
-    }
+      return (await axios.post(this.url, preparedData, {
+        headers: {
+          "Content-Type": "application/json"
+        } 
+      })).data;
+  }
 
-    static async getById(id:string): Promise<TripPlan>{
-      return (await axios.get(this.url+`/${id}`)).data
-    }
+  static async get(): Promise<TripPlan[]> {
+    return (await axios.get(this.url)).data;
+  }
 
-    
+  static async getByEmail(email: string): Promise<TripPlan[]> {
+    return (await axios.get(`${this.url}/getByEmail?email=${email}`)).data;
+  }
+
+  static async getById(id: string): Promise<TripPlan> {
+    return (await axios.get(`${this.url}/${id}`)).data;
+  }
 }
+
+
 
 
 export const testTripPlan: TripPlan = {
   "userId": "66e337245e26008a2f5331d6",
   "title": "string",
   "description": "string",
-  "startDate": "2024-11-13T22:46:32.531Z",
-  "endDate": "2024-11-13T22:46:32.531Z",
+  "startDate": null,
+  "endDate": null,
   "cityPlans": [
     {
-      "startDate": "2024-11-13T22:46:32.531Z",
-      "endDate": "2024-11-13T22:46:32.531Z",
+      "startDate": "2024-11-14T21:54:24.737Z",
+      "endDate": "2024-11-14T21:54:24.737Z",
       "originLocation": "string",
       "destiantionLocation": "string",
       "image_url": {
@@ -102,5 +112,4 @@ export const testTripPlan: TripPlan = {
   "groupType": 0,
   "typeTravel": "string",
   "participantsFromOtherCountries": true
-};
-
+}
