@@ -66,7 +66,7 @@ export const testTripPlan: TripPlan = {
         "originUrl": "string",
         "destinationUrl": "string"
       },
-      "transport": 0,
+      "transport": null,
       "hotels": [
         {
           "name": "string",

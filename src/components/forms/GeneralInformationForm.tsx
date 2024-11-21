@@ -60,7 +60,7 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
             onChange={(e) => dataTripPlan.set({ ...dataTripPlan.data, description: e.target.value })}
           />
         </Form.Group>
-        <Button variant="primary" className="w-100 mb-4">Add image</Button>
+        <Button variant="outline-primary" className="w-100 mb-4">Add image</Button>
 
         <Row className="mb-3">
           <Col md={5}>
@@ -232,10 +232,6 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
             </Form.Group>
           </Col>
         </Row>
-
-        <Button variant="primary" className="w-100">
-          Next
-        </Button>
       </Form>
     </>
   );
