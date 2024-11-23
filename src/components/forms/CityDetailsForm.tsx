@@ -1,42 +1,40 @@
-import React from 'react';
-import { Container, Row, Col, Button, Form, InputGroup } from 'react-bootstrap';
-import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from 'react-icons/fa';
+import React from "react";
+import { Container, Row, Col, Button, Form, InputGroup } from "react-bootstrap";
+import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from "react-icons/fa";
+import { CityPlan } from "../../interfaces/TripPlan";
 
-const CityDetailsForm = () => {
+interface CityDetailsFormProps {
+  cityPlan: CityPlan;
+}
+
+const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
   return (
-    <Container className="p-4" style={{ maxWidth: '600px' }}>
-      {/* Number of Days, Start Date, End Date, No Dates */}
+    <Container className="p-4" style={{ maxWidth: "600px" }}>
+      <h5 className="mb-4">Details about {cityPlan.originLocation || "City"}</h5>
       <Row className="mb-3">
-        <Col md={3}>
-          <Form.Select>
-            <option>Number of days</option>
-          </Form.Select>
-        </Col>
-        <Col md={3}>
-          <InputGroup>
-            <Form.Control type="date" placeholder="Start date" />
-            <InputGroup.Text>
-              <FaCalendarAlt />
-            </InputGroup.Text>
-          </InputGroup>
-        </Col>
-        <Col md={3}>
-          <InputGroup>
-            <Form.Control type="date" placeholder="End date" />
-            <InputGroup.Text>
-              <FaCalendarAlt />
-            </InputGroup.Text>
-          </InputGroup>
-        </Col>
-        <Col md={3} className="d-flex align-items-center">
-          <Form.Check type="checkbox" label="No dates" />
-        </Col>
-      </Row>
-
-      {/* Plan for Each Day */}
-      <Form.Group controlId="planForEachDay" className="mb-3">
-        <Form.Control type="text" placeholder="Plan for each day" />
-      </Form.Group>
+          <Col md={5}>
+            <Form.Group controlId="startDate">
+              <Form.Label>First day</Form.Label>
+              <Form.Control
+                type="date"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={5}>
+            <Form.Group controlId="endDate">
+              <Form.Label>Last day</Form.Label>
+              <Form.Control
+                type="date"
+              />
+            </Form.Group>
+          </Col>
+          <Col md={2} className="d-flex align-items-center">
+            <Form.Check
+              type="checkbox"
+              label="One day"
+            />
+          </Col>
+        </Row>
 
       {/* Lodging Type and Location Search */}
       <Row className="mb-3">
@@ -102,17 +100,7 @@ const CityDetailsForm = () => {
           </Form.Select>
         </Col>
       </Row>
-      <Button variant="primary" className="w-100 mb-4">Add transfer documents</Button>
-
-      {/* Prev and Next Buttons */}
-      <Row className="justify-content-between">
-        <Col xs="auto">
-          <Button variant="primary">Prev</Button>
-        </Col>
-        <Col xs="auto">
-          <Button variant="primary">Next</Button>
-        </Col>
-      </Row>
+      <Button variant="primary" className="w-100 mb-4">Add transfer documents</Button>    
     </Container>
   );
 };
