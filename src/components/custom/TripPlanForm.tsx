@@ -5,6 +5,8 @@ import CitiesPlanForm from "../forms/CitiesPlanForm";
 import CityDetailsForm from "../forms/CityDetailsForm";
 import { TripPlan } from "../../interfaces/TripPlan";
 import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
+import useTextShortener from "../../hooks/useTextShortener";
+import textShortener from "../../hooks/useTextShortener";
 
 const TripPlanForm = () => {
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(testTripPlan);
@@ -51,7 +53,7 @@ const TripPlanForm = () => {
           <Tab
             eventKey={`details-${index}`}
             key={`details-${index}`}
-            title={`Details about ${cityPlan.originLocation || cityPlan.destiantionLocation || `City ${index + 1}`}`}
+            title={textShortener(cityPlan.originLocation, 15)}
           >
             <CityDetailsForm cityPlan={cityPlan} />
           </Tab>
@@ -73,7 +75,7 @@ const TripPlanForm = () => {
               Next
             </Button>
           ) : (
-            <Button variant="success" onClick={generateTripPlan}>
+            <Button variant="success" onClick={async ()=>await TripPlanApi.create(testTripPlan)}>
               Create Trip
             </Button>
           )}

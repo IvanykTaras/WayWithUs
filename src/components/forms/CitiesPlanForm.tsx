@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Form, Popover, OverlayTrigger } from "reac
 import { FaBus, FaCar, FaTrain, FaPlane, FaShip, FaBicycle, FaWalking } from "react-icons/fa";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
-import { TripPlan, Transport } from "../../interfaces/TripPlan";
+import { TripPlan, Transport, CityPlan } from "../../interfaces/TripPlan";
 
 interface ICitiesPlanForm {
   dataTripPlan: {
@@ -54,48 +54,35 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
   const handleAddCity = () => {
     const updatedCityPlans = [...dataTripPlan.data.cityPlans];
 
-    updatedCityPlans.push({
-      "startDate": "2024-11-14T21:54:24.737Z",
-      "endDate": "2024-11-14T21:54:24.737Z",
+    
+    const newCityPlan: CityPlan = {
+      "startDate": "2024-11-23T20:21:48.658Z",
+      "endDate": "2024-11-23T20:21:48.658Z",
       "originLocation": "string",
-      "destiantionLocation": "string",
-      "image_url": {
-        "originUrl": "string",
-        "destinationUrl": "string"
-      },
-      "transport": null,
-      "hotels": [
+      "image_url": "string",
+      "transport": 0,
+      "accommodations": [
         {
           "name": "string",
-          "address": "string",
-          "price": "string",
-          "image_url": "string",
-          "geo_coordinates": "string",
-          "rating": "string",
           "description": "string",
+          "image_url": "string",
           "googleMapUrl": "string"
         }
       ],
-      "itinerary": [
+      "places": [
         {
-          "day": 0,
-          "places": [
-            {
-              "time": "string",
-              "location": "string",
-              "details": "string",
-              "image_url": "string",
-              "geo_coordinates": "string",
-              "ticket_pricing": "string",
-              "rating": "string",
-              "googleMapUrl": "string"
-            }
-          ]
+          "location": "string",
+          "details": "string",
+          "image_url": "string",
+          "googleMapUrl": "string"
         }
       ]
-    });
+    }
+
+    updatedCityPlans.push(newCityPlan);
 
     dataTripPlan.set({ ...dataTripPlan.data, cityPlans: updatedCityPlans });
+
   };
 
   const handleDeleteLastCity = () => {
@@ -116,8 +103,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
                 apiKey={PLACES_API_KEY}
                 selectProps={{
                   placeholder: index === 0 ? "Cities From" : `Cities To ${index}`,
-                  onChange: (value) =>
-                    handleCityChange(value, index, index === 0 ? "originLocation" : "destiantionLocation"),
+                  onChange: (value) => handleCityChange(value, index, "originLocation"),
                   styles: {
                     control: (base) => ({
                       ...base,

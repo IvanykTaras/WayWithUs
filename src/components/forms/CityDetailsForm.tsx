@@ -12,7 +12,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
     <Container className="p-4" style={{ maxWidth: "600px" }}>
       <h5 className="mb-4">Details about {cityPlan.originLocation || "City"}</h5>
       <Row className="mb-3">
-          <Col md={5}>
+          <Col md={6}>
             <Form.Group controlId="startDate">
               <Form.Label>First day</Form.Label>
               <Form.Control
@@ -20,19 +20,13 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
               />
             </Form.Group>
           </Col>
-          <Col md={5}>
+          <Col md={6}>
             <Form.Group controlId="endDate">
               <Form.Label>Last day</Form.Label>
               <Form.Control
                 type="date"
               />
             </Form.Group>
-          </Col>
-          <Col md={2} className="d-flex align-items-center">
-            <Form.Check
-              type="checkbox"
-              label="One day"
-            />
           </Col>
         </Row>
 

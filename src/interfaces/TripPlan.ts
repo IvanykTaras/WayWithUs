@@ -7,7 +7,7 @@ export interface TripPlan {
   userId: string;
   title: string;
   description: string;
-  startDate: string | null ;
+  startDate: string | null;
   endDate: string | null;
   cityPlans: CityPlan[];
   languages: string[];
@@ -15,7 +15,6 @@ export interface TripPlan {
   genderParticipants: GenderParticipants;
   withChildren: boolean;
   budget: number;
-  budgetType: BudgetType;
   groupType: number;
   typeTravel: string;
   participantsFromOtherCountries: boolean;
@@ -30,11 +29,10 @@ export interface CityPlan {
   startDate: string;
   endDate: string;
   originLocation: string;
-  destiantionLocation: string | null;
-  image_url: ImageUrl;
-  transport: Transport | null; 
-  hotels: Hotel[];
-  itinerary: Itinerary[];
+  image_url: string;
+  transport: Transport | null;
+  accommodations: Accommodation[];
+  places: Place[];
 }
 
 export enum Transport {
@@ -47,34 +45,16 @@ export enum Transport {
   Bicycle
 }
 
-export interface Hotel {
+export interface Accommodation {
   name: string;
-  address: string;
-  price: string;
-  image_url: string;
-  geo_coordinates: string;
-  rating: string;
   description: string;
+  image_url: string;
   googleMapUrl: string;
-}
-
-export interface Itinerary {
-  day: number;
-  places: Place[];
 }
 
 export interface Place {
-  time: string;
   location: string;
   details: string;
   image_url: string;
-  geo_coordinates: string;
-  ticket_pricing: string;
-  rating: string;
   googleMapUrl: string;
-}
-
-export interface ImageUrl {
-  originUrl: string;
-  destinationUrl: string;
 }
