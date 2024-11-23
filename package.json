@@ -33,7 +33,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "add": "git add . && git commit -m 'arseni: do work' && git push origin arseniWork:arseniWork",
+    "add": "git add . && git commit -m \"arseni: do work\"&& git push origin arseniWork:arseniWork",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
