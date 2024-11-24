@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { Button, Modal, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { USER_INFO } from "../assets/ApiKeys";
 
 interface IProps {
   show: boolean;
@@ -20,9 +21,11 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
   });
 
   const getUserProfile = async (token: string) => {
+    console.log(token)
     try {
       // Replace with your actual Google profile API
-      const response = await axios.get(`/user-info?access_token=${token}`);
+      
+      const response = await axios.get(USER_INFO.replace("{token}", token));
       sessionStorage.setItem("user", JSON.stringify(response.data));
       handleClose();
     } catch (error) {
