@@ -2,9 +2,12 @@ import React from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import Select, { SingleValue } from "react-select";
+import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from "react-icons/fa";
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
 import { accommodationOptions, AccommodationOption } from "./AccommodationOption";
 import { CityPlan, Place } from "../../interfaces/TripPlan";
+import { Accommodation, CityPlan } from "../../interfaces/TripPlan";
+        
 
 interface CityDetailsFormProps {
   cityPlan: {

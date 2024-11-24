@@ -9,6 +9,7 @@ import { Value } from '@radix-ui/themes/dist/cjs/components/data-list';
 import { IGoogleUser } from './interfaces/IGoogleUser';
 import { Footer } from './components/custom/Footer';
 import TravelForm from './components/TravelForm';
+import { Loadding } from './components/custom/Loadding';
 
 export const dataContext = createContext<Array<{value:any,set:any}>>([]);
 
@@ -61,7 +62,7 @@ function App() {
       {/* <Theme accentColor="red" grayColor="sand" panelBackground="solid" radius="full" appearance='dark'> */}
         <ToastContainer />
         <Header/>
-        <Outlet/>
+        {loadding ? <Loadding/> : <Outlet/>}
         {/* <TravelForm/> */}
         <AuthModal
           show={authModalShow}
@@ -73,5 +74,7 @@ function App() {
     </dataContext.Provider>
   );
 }
+
+
 
 export default App;
