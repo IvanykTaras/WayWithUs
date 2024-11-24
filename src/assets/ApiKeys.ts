@@ -7,5 +7,5 @@ export const PLACES_API_TEXT_SEARCH = "https://places.googleapis.com/v1/places:s
 export const apiKeyAndUrl = {
     PLACES_API_KEY:"AIzaSyBPcSKuwLsx_Jr4npHMzWpKFhupBms7xfo",
     GEMINI_API_KEY:"AIzaSyBlCJARSX2-4UG1iKEQW2cg29yYjjmJjc0",
-    CLIEND_ID_OAUTH:"855465720082-amiqkfaec83mnj7ttmjagp3ueavhqqr7.apps.googleusercontent.com",    
+    CLIEND_ID_OAUTH:"855465720082-amiqkfaec83mnj7ttmjagp3ueavhqqr7.apps.googleusercontent.com",
 }
