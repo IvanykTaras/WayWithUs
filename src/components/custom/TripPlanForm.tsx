@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Container, Tabs, Tab, Button, Row, Col } from "react-bootstrap";
 import GeneralInformationForm from "../forms/GeneralInformationForm";
 import CitiesPlanForm from "../forms/CitiesPlanForm";
@@ -7,13 +7,41 @@ import { TripPlan } from "../../interfaces/TripPlan";
 import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
 import useTextShortener from "../../hooks/useTextShortener";
 import textShortener from "../../hooks/useTextShortener";
+import { toast } from "react-toastify";
+import {  dataContext, DataEnum } from "../../App";
+import { AsyncAction } from "../../utils";
+import { AxiosError } from "axios";
 
 const TripPlanForm = () => {
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(testTripPlan);
   const [activeTab, setActiveTab] = useState<string>("general");
+  const data = useContext(dataContext);
 
   const generateTripPlan = async () => {
-    await TripPlanApi.create(dataTripPlan);
+    
+    await AsyncAction(data[DataEnum.Loadding].set, async ()=>{
+      
+      try{
+        await toast.promise(
+          async ()=>{
+          await TripPlanApi.create(dataTripPlan);
+          },
+          {
+          pending: 'creating trip pending',
+          success: 'Trip created 👌',
+          error: 'Promise rejected 🤯'
+          }
+        );
+      }catch(error){
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+        
+      }
+
+    });
+
   };
 
   const handlePrev = () => {
@@ -75,7 +103,7 @@ const TripPlanForm = () => {
               Next
             </Button>
           ) : (
-            <Button variant="success" onClick={async ()=>await TripPlanApi.create(testTripPlan)}>
+            <Button variant="success" onClick={generateTripPlan}>
               Create Trip
             </Button>
           )}

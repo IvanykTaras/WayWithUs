@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button, Form, InputGroup } from "react-bootstrap";
 import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from "react-icons/fa";
-import { CityPlan } from "../../interfaces/TripPlan";
+import { Accommodation, CityPlan } from "../../interfaces/TripPlan";
 
 interface CityDetailsFormProps {
   cityPlan: CityPlan;
