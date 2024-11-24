@@ -5,8 +5,7 @@ import Select, { SingleValue } from "react-select";
 import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from "react-icons/fa";
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
 import { accommodationOptions, AccommodationOption } from "./AccommodationOption";
-import { CityPlan, Place } from "../../interfaces/TripPlan";
-import { Accommodation, CityPlan } from "../../interfaces/TripPlan";
+import { CityPlan, Place,Accommodation } from "../../interfaces/TripPlan";
         
 
 interface CityDetailsFormProps {

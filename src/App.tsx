@@ -10,6 +10,8 @@ import { IGoogleUser } from './interfaces/IGoogleUser';
 import { Footer } from './components/custom/Footer';
 import TravelForm from './components/TravelForm';
 import { Loadding } from './components/custom/Loadding';
+import { IdentityApi } from './services/IdentityApi';
+import { Button } from 'react-bootstrap';
 
 export const dataContext = createContext<Array<{value:any,set:any}>>([]);
 
@@ -54,13 +56,22 @@ function App() {
     }   
   },[isUser]);
 
+  const login = async ()=>{
+    const data = await IdentityApi.login({
+      email: "test@test.test",
+      password: "test"
+    })
+
+    sessionStorage.setItem("token", JSON.stringify(data.accessToken));
+    console.dir(data);
+  }
 
   return (
     <dataContext.Provider value={data}>
+    <ToastContainer />
     <div className="app">
       <Theme radius='large' scaling='110%' >
       {/* <Theme accentColor="red" grayColor="sand" panelBackground="solid" radius="full" appearance='dark'> */}
-        <ToastContainer />
         <Header/>
         {loadding ? <Loadding/> : <Outlet/>}
         {/* <TravelForm/> */}

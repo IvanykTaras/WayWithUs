@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import { Button, Modal, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { USER_INFO } from "../assets/ApiKeys";
+import { IdentityApi } from "../services/IdentityApi";
+import { AsyncAction } from "../utils";
+import { dataContext, DataEnum } from "../App";
+import { IGoogleUser } from "../interfaces/IGoogleUser";
 
 interface IProps {
   show: boolean;
@@ -14,6 +18,7 @@ interface IProps {
 export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const data = useContext(dataContext);
 
   const auth = useGoogleLogin({
     onSuccess: (tokenResponse) => getUserProfile(tokenResponse.access_token),
@@ -21,11 +26,11 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
   });
 
   const getUserProfile = async (token: string) => {
-    console.log(token)
     try {
       // Replace with your actual Google profile API
       
       const response = await axios.get(USER_INFO.replace("{token}", token));
+      console.dir(response.data);
       sessionStorage.setItem("user", JSON.stringify(response.data));
       handleClose();
     } catch (error) {
@@ -33,21 +38,56 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async ()=>{
+    
     if (!email || !password) {
       toast.error("Please fill in all fields");
       return;
     }
-    try {
-      // Replace with your actual login API endpoint
-      const response = await axios.post("/api/login", { email, password });
-      sessionStorage.setItem("user", JSON.stringify(response.data));
-      toast.success("Login successful");
-      handleClose();
-    } catch (error) {
-      toast.error("Login failed");
-    }
-  };
+    
+    
+    await AsyncAction(data[DataEnum.Loadding].set, async ()=>{
+      try {
+        
+        await toast.promise( async ()=>{
+          const data = await IdentityApi.login({
+            email: email,
+            password: password
+          })
+
+          sessionStorage.setItem("token", JSON.stringify(data.accessToken));
+          
+          const user: IGoogleUser = {
+            id: "000000000000000000000",
+            email: email,
+            verified_email: true,
+            name: "User name",
+            given_name: "User",
+            family_name: "name",
+            picture: require("../assets/img/car.png")
+          };
+
+          console.log(user);
+          sessionStorage.setItem("user", JSON.stringify(user));
+          
+          handleClose();
+        },{
+          pending: 'logging in',
+          success: 'Login Successful 👌',
+          error: 'Email or password is wrong 🤯'
+        })
+      
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    
+    });
+  }
+
+  
 
   return (
     <Modal show={show} onHide={handleClose} centered>

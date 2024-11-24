@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <Navbar expand="lg" className="bg-primary text-white py-3">
+      <Navbar  expand="lg" className="bg-primary text-white py-3" bg="dark" variant="dark">
         <Container>
           <Navbar.Brand>
             <Link to={"/"} className="text-white d-flex align-items-center">

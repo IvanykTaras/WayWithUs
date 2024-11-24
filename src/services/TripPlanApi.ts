@@ -29,7 +29,8 @@ export class TripPlanApi {
 
       return (await axios.post(this.url, preparedData, {
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`
         } 
       })).data;
   }
