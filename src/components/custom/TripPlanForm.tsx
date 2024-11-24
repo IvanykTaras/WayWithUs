@@ -3,9 +3,8 @@ import { Container, Tabs, Tab, Button, Row, Col } from "react-bootstrap";
 import GeneralInformationForm from "../forms/GeneralInformationForm";
 import CitiesPlanForm from "../forms/CitiesPlanForm";
 import CityDetailsForm from "../forms/CityDetailsForm";
-import { TripPlan } from "../../interfaces/TripPlan";
+import { TripPlan, CityPlan } from "../../interfaces/TripPlan";
 import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
-import useTextShortener from "../../hooks/useTextShortener";
 import textShortener from "../../hooks/useTextShortener";
 
 const TripPlanForm = () => {
@@ -55,7 +54,18 @@ const TripPlanForm = () => {
             key={`details-${index}`}
             title={textShortener(cityPlan.originLocation, 15)}
           >
-            <CityDetailsForm cityPlan={cityPlan} />
+            <CityDetailsForm
+              index={index}
+              cityPlan={{
+                data: cityPlan,
+                set: (updatedCityPlan: CityPlan) => {
+                  const updatedCityPlans = dataTripPlan.cityPlans.map((plan, i) =>
+                    i === index ? updatedCityPlan : plan
+                  );
+                  setDataTripPlan({ ...dataTripPlan, cityPlans: updatedCityPlans });
+                },
+              }}
+            />
           </Tab>
         ))}
       </Tabs>
@@ -75,7 +85,7 @@ const TripPlanForm = () => {
               Next
             </Button>
           ) : (
-            <Button variant="success" onClick={async ()=>await TripPlanApi.create(testTripPlan)}>
+            <Button variant="success" onClick={generateTripPlan}>
               Create Trip
             </Button>
           )}

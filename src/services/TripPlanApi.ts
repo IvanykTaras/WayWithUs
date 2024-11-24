@@ -66,6 +66,7 @@ export const testTripPlan: TripPlan = {
       "accommodations": [
         {
           "name": "string",
+          "location_acc": "string",
           "description": "string",
           "image_url": "string",
           "googleMapUrl": "string"

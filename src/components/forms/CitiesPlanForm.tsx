@@ -23,7 +23,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
     { icon: <FaWalking />, label: "Walk", value: Transport.OnFeet },
   ];
 
-  const handleCityChange = (value: any, index: number, field: "originLocation" | "destiantionLocation") => {
+  const handleCityChange = (value: any, index: number, field: "originLocation") => {
     const updatedCityPlans = dataTripPlan.data.cityPlans.map((cityPlan, i) => {
       if (i === index) {
         return {
@@ -64,6 +64,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
       "accommodations": [
         {
           "name": "string",
+          "location_acc": "string",
           "description": "string",
           "image_url": "string",
           "googleMapUrl": "string"

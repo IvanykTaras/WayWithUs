@@ -29,7 +29,7 @@ export interface CityPlan {
   startDate: string;
   endDate: string;
   originLocation: string;
-  image_url: string;
+  image_url: string;                                     
   transport: Transport | null;
   accommodations: Accommodation[];
   places: Place[];
@@ -47,6 +47,7 @@ export enum Transport {
 
 export interface Accommodation {
   name: string;
+  location_acc: string;
   description: string;
   image_url: string;
   googleMapUrl: string;
