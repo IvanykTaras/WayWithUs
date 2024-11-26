@@ -150,7 +150,7 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
           </Col>
           <Col md={6}>
             <Form.Group controlId="budget">
-              <Form.Label>Budget</Form.Label>
+              <Form.Label>Budget $</Form.Label>
               <Form.Control
                 type="number"
                 value={dataTripPlan.data.budget}

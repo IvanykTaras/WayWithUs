@@ -42,17 +42,85 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <Navbar  expand="lg" className="bg-primary text-white py-3" bg="dark" variant="dark">
+      <Navbar
+        expand="lg"
+        style={{ backgroundColor: "#4CAF50" }}
+        className="text-white py-3"
+      >
         <Container>
           <Navbar.Brand>
-            <Link to={"/"} className="text-white d-flex align-items-center">
+            <Link to={"/"} style={{ color: "#FFFFFF" }} className="d-flex align-items-center">
               <LogoSVG />
               <span className="ms-2 fw-bold fs-4">WayWithUs</span>
             </Link>
           </Navbar.Brand>
+          <Container className="text-center mt-4">
+            {context[DataEnum.User].value && (
+              <Nav className="justify-content-center">
+                <Nav.Item>
+                  <Link to={"/search"}>
+                    <Button
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        color: "#4CAF50",
+                      }}
+                      className="mx-1 border-0"
+                    >
+                      Search
+                    </Button>
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link to={"/create-trip"}>
+                    <Button
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        color: "#4CAF50",
+                      }}
+                      className="mx-1 border-0"
+                    >
+                      Create
+                    </Button>
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link to={"/my-trip"}>
+                    <Button
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        color: "#4CAF50",
+                      }}
+                      className="mx-1 border-0"
+                    >
+                      My Trips
+                    </Button>
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link to={"/business"}>
+                    <Button
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        color: "#4CAF50",
+                      }}
+                      className="mx-1 border-0"
+                    >
+                      Business
+                    </Button>
+                  </Link>
+                </Nav.Item>
+              </Nav>
+            )}
+          </Container>
           <Nav className="ms-auto d-flex align-items-center">
             {!context[DataEnum.User].value ? (
-              <Button variant="light" onClick={handleSignInClick}>
+              <Button
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#4CAF50",
+                }}
+                onClick={handleSignInClick}
+              >
                 Войти
               </Button>
             ) : (
@@ -70,10 +138,10 @@ export const Header: React.FC = () => {
                         fallback="T"
                       />
                       <Box>
-                        <Text as="div" size="2" weight="bold">
+                        <Text as="div" size="2" weight="bold" style={{ color: "#FFFFFF" }}>
                           {context[DataEnum.User].value.name}
                         </Text>
-                        <Text as="div" size="2" color="gray">
+                        <Text as="div" size="2" style={{ color: "#E8F5E9" }}>
                           {context[DataEnum.User].value.email}
                         </Text>
                       </Box>
@@ -92,41 +160,6 @@ export const Header: React.FC = () => {
           </Nav>
         </Container>
       </Navbar>
-      <Container className="text-center mt-4">
-        <h1 className="text-black fw-bold mb-4">Create your own trip</h1>
-        {context[DataEnum.User].value && ( // Показываем только если пользователь авторизован
-          <Nav className="justify-content-center">
-            <Nav.Item>
-              <Link to={"/search"}>
-                <Button variant="primary" className="mx-1">
-                  Search
-                </Button>
-              </Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Link to={"/create-trip"}>
-                <Button variant="primary" className="mx-1">
-                  Create
-                </Button>
-              </Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Link to={"/my-trip"}>
-                <Button variant="primary" className="mx-1">
-                  My Trips
-                </Button>
-              </Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Link to={"/business"}>
-                <Button variant="primary" className="mx-1">
-                  Business
-                </Button>
-              </Link>
-            </Nav.Item>
-          </Nav>
-        )}
-      </Container>
     </>
   );
 };

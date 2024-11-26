@@ -20,6 +20,7 @@ import { MyTrips } from './components/MyTrips';
 import { MyTheme } from './components/MyTheme';
 import { Theme } from '@radix-ui/themes';
 import TripPlanForm from './components/custom/TripPlanForm';
+import SearchForm from './components/Search/SearchForm';
 
 
 
@@ -39,10 +40,10 @@ const router = createBrowserRouter([
         element: <TripPlanForm/>
         // element:<CreateTrip/>
       },
-      // {
-      //   path:"/trip-view/:trip_plan_id",
-      //   element:<TripView/> 
-      // },
+      {
+        path:"/search",
+        element:<SearchForm/> 
+      },
       // {
       //   path:"/my-trips",
       //   element:<MyTrips/>

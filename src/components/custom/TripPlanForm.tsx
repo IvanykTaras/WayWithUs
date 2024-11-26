@@ -65,7 +65,8 @@ const TripPlanForm = () => {
   };
 
   return (
-    <Container className="py-4" style={{ maxWidth: 800, padding: 0 }}>
+    <Container className="py-4" style={{ maxWidth: 800, padding: 0 }}>      
+      <h1 className="text-black fw-bold mb-4">Create your own trip</h1>
       {/* Tab Navigation */}
       <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k || "general")} id="trip-form-tabs" className="mb-4">
         <Tab eventKey="general" title="General Information">

@@ -5,7 +5,7 @@ import Select, { SingleValue } from "react-select";
 import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from "react-icons/fa";
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
 import { accommodationOptions, AccommodationOption } from "./AccommodationOption";
-import { CityPlan, Place,Accommodation } from "../../interfaces/TripPlan";
+import { CityPlan, Place, Accommodation } from "../../interfaces/TripPlan";
         
 
 interface CityDetailsFormProps {
@@ -22,7 +22,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
 
     const updatedAccommodations = cityPlan.data.accommodations.map((accommodation) => ({
       ...accommodation,
-      name: selectedOption.value, // Устанавливаем выбранное значение
+      name: selectedOption.value, 
     }));
 
     cityPlan.set({ ...cityPlan.data, accommodations: updatedAccommodations });
@@ -33,7 +33,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
 
     const updatedAccommodations = cityPlan.data.accommodations.map((accommodation) => ({
       ...accommodation,
-      location_acc: selectedOption.label, // Устанавливаем выбранную локацию
+      location_acc: selectedOption.label, 
     }));
 
     cityPlan.set({ ...cityPlan.data, accommodations: updatedAccommodations });
@@ -44,7 +44,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
 
     const updatedPlaces = cityPlan.data.places.map((place, index) =>
       index === placeIndex
-        ? { ...place, location: selectedOption.label } // Устанавливаем локацию для места
+        ? { ...place, location: selectedOption.label }
         : place
     );
 
@@ -54,7 +54,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
   const handleDescriptionChange = (input: HTMLInputElement, placeIndex: number) => {
     const updatedPlaces = cityPlan.data.places.map((place, index) =>
       index === placeIndex
-        ? { ...place, details: input.value } // Обновляем описание
+        ? { ...place, details: input.value } 
         : place
     );
 
