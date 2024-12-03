@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IGoogleUser } from "../interfaces/IGoogleUser";
 
 export class IdentityApi{
     private static readonly url: string = "https://localhost:7137/api/Identity/login"; 
@@ -19,7 +20,7 @@ type UserLoginDat = {
   }
 
 interface LoginReponse {
-    userName: string,
+    user: IGoogleUser,
     accessToken: string,
     expiresIn: number
   }
