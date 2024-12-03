@@ -108,6 +108,22 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
             />
           </Form.Group>
         </Col>
+        <Col md={12} className="mt-4">
+        <Form.Group controlId="tripDescription" className="mb-3">
+          <Form.Label>Trip Description</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={cityPlan.data.description}
+            onChange={(e) =>{
+              cityPlan.set({
+                ...cityPlan.data,
+                description: e.target.value || "",
+              })
+            }}
+          />
+        </Form.Group>
+        </Col>
       </Row>
 
       {/* Тип размещения */}
@@ -190,9 +206,6 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
       {/* Добавить место */}
       <Button variant="primary" className="w-100 mb-4" onClick={handleAddPlace}>
         Add new place
-      </Button>
-      <Button variant="primary" className="w-100 mb-4">
-        Add transfer documents
       </Button>
     </Container>
   );

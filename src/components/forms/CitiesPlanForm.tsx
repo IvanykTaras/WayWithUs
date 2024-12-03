@@ -58,6 +58,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
     const newCityPlan: CityPlan = {
       "startDate": "2024-11-23T20:21:48.658Z",
       "endDate": "2024-11-23T20:21:48.658Z",
+      "description": "string",
       "originLocation": "string",
       "image_url": "string",
       "transport": 0,

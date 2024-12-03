@@ -61,6 +61,7 @@ export const testTripPlan: TripPlan = {
     {
       "startDate": "2024-11-23T20:21:48.658Z",
       "endDate": "2024-11-23T20:21:48.658Z",
+      "description": "string",
       "originLocation": "string",
       "image_url": "string",
       "transport": 0,
@@ -95,5 +96,6 @@ export const testTripPlan: TripPlan = {
   "budget": 0,
   "groupType": 0,
   "typeTravel": "string",
-  "participantsFromOtherCountries": true
+  "participantsFromOtherCountries": true,
+  "participants": []
 }
