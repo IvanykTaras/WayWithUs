@@ -30,7 +30,7 @@ const SearchParam: React.FC<SearchParamProps> = ({trips,setTrips}) => {
 
   useEffect(() => {
     filterTrips();
-  }, [cities, selectedLanguages, selectedTypeOfTreval, selectedBudget, selectedGender, withChildren, participantsFromOtherCountries, departureDate, returnDate]);
+  }, [cities, selectedLanguages, selectedTypeOfTreval, selectedBudget, selectedGender, withChildren, participantsFromOtherCountries, departureDate, returnDate,showDates]);
 
   const handleRemoveCity = (index: number) => {
     const updatedCities = cities.filter((_, i) => i !== index);
