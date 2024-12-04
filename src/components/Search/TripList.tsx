@@ -1,94 +1,111 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Badge, ButtonGroup } from "react-bootstrap";
 import { TripPlanApi } from "../../services/TripPlanApi";
 import { toast } from "react-toastify";
 import { TripPlan } from "../../interfaces/TripPlan";
 import { AsyncAction } from "../../utils";
 import { dataContext, DataEnum } from "../../App";
 import { AxiosError } from "axios";
+import styled from "styled-components";
+import { GenderParticipantsValueList } from "../../enums/GenderParticipants";
+import { languageOptions } from "../forms/languages";
+import { IGoogleUser } from "../../interfaces/IGoogleUser";
+import { travelTypesOptions } from "../forms/travelTypes";
 
-// const trips = [
-//   {
-//     title: "Best Trip Ever",
-//     route: "Krakow - Berlin - Paris - London",
-//     participants: "10-12 people",
-//     age: "18-25 y.o.",
-//     languages: "English, Polish, Russian",
-//     type: "Cultural education",
-//     date: "01/04/2024 - 20/04/2024",
-//     budget: "$1500-2000",
-//   },
-//   {
-//     title: "European Explorer",
-//     route: "Vienna - Prague - Budapest",
-//     participants: "6-8 people",
-//     age: "25-35 y.o.",
-//     languages: "English, German",
-//     type: "Adventure",
-//     date: "15/05/2024 - 25/05/2024",
-//     budget: "$1200-1800",
-//   },
-//   {
-//     title: "Mediterranean Escape",
-//     route: "Rome - Athens - Barcelona",
-//     participants: "12-15 people",
-//     age: "30-45 y.o.",
-//     languages: "English, Spanish, Italian",
-//     type: "Cultural education",
-//     date: "01/06/2024 - 10/06/2024",
-//     budget: "$2000-2500",
-//   },
-// ];
+interface TripListProps {
+  trips: TripPlan[];
+  users: IGoogleUser[];
+}
 
-
-
-
-const TripList: React.FC = () => {
-  const [trips, setTrips] = useState<TripPlan[]>([]);
-  const context = useContext(dataContext);
-
-
-  useEffect(() => {
-    context[DataEnum.DownloadTrips].set(false);
-    context[DataEnum.DownloadTrips].set(true);
-    setTrips(context[DataEnum.Trips].value);
-    console.log(trips)
-  }, []);
+const TripList: React.FC<TripListProps> = ({ trips, users }) => {
   
-  
-  return (
+    
+    
+
+  // languages: string[];
+
+  return ( 
     <div>
       {trips.map((trip, index) => (
         <Card className="mb-4 shadow-sm" key={index}>
-          <Card.Body>
-            <Card.Title>{trip.title}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">
-              trip
-            </Card.Subtitle>
-            <Card.Text>
-              {/* <strong>Number of participants:</strong> {trip.participants} <br />
-              <strong>Age:</strong> {trip.age} <br />
-              <strong>Languages:</strong> {trip.languages} <br />
-              <strong>Type of travel:</strong> {trip.type} <br />
-              <strong>Date:</strong> {trip.date} <br />
-              <strong>Budget:</strong> {trip.budget} */}
-            </Card.Text>
-            <div className="d-flex justify-content-between align-items-center">
-              <Button variant="primary">Respond</Button>
-              <div>
-                <Button variant="link" className="text-muted me-2">
-                  ❤️
-                </Button>
-                <Button variant="link" className="text-muted">
-                  🔗
-                </Button>
-              </div>
-            </div>
+          <Card.Header>
+            <samp style={{fontSize:"10px"}}><b>id:</b> {trip.id}</samp>
+            <h6>
+              <samp><b>Owner:</b> {users.find(u => u.id === trip.userId) ? users.find(u => u.id === trip.userId)?.name  : "anonimus" }</samp>
+              <samp className="mx-3">|</samp>
+              <samp><b>Title:</b> {trip.title} </samp>
+            </h6>
+          </Card.Header>
+          <Card.Body style={{fontSize:"14px"}}>
+            <Div>
+              { 
+                trip.startDate && trip.endDate ? (<>
+                <samp><b>Start date:</b> <Badge bg="warning"  style={{color:"black"}}>{trip.startDate?.split("T")[0]}</Badge></samp>
+                <samp><b>End date:</b> <Badge bg="warning"  style={{color:"black"}}>{trip.endDate?.split("T")[0]}</Badge></samp>
+                <samp className="mx-3">|</samp></>
+                ) : <></>
+              }
+              <samp key={index}><b>City:</b> 
+              {trip.cityPlans.map((city, index) => (
+                <Badge bg="primary" style={{color:"black"}} className="mx-1">{city.originLocation}</Badge>
+              ))}
+              </samp>
+            </Div>
+            <details>
+              <summary>
+                <samp>More information</samp>
+              </summary>
+              
+              <p>
+                <b>Description:</b> <br />
+                {trip.description}  
+              </p>
+              <hr />
+              <p> 
+                <Div>
+                  <samp><b>Current number of participants:</b> <Badge bg="info" >{trip.participants.length}</Badge></samp>
+                  <samp><b>Max participants:</b> <Badge bg="danger" >{trip.groupType}</Badge></samp>
+                  <samp><b>Age:</b> <Badge bg="info" >{trip.age.min}-{trip.age.max}</Badge></samp>
+                  <samp><b>Type travel:</b> <Badge bg="info" >{travelTypesOptions.find(t=>t.value==trip.typeTravel)?.label}</Badge></samp>
+                  <samp><b>With children:</b> <Badge bg="info" >{trip.withChildren ? "Yes" : "No"}</Badge></samp>
+                  <samp><b>Minimal budget:</b> <Badge bg="info">{trip.budget}$</Badge></samp>
+                  <samp><b>Languages:</b> <Badge bg="info">{
+                    trip.languages.map((lang)=><> |{languageOptions.find(l=>l.value==lang)?.label}| </>)
+                  }</Badge></samp>
+                  <samp><b>Gender participants:</b> <Badge bg="info" >{GenderParticipantsValueList[trip.genderParticipants]}</Badge></samp>
+                  <samp><b>Participants from other countries:</b> <Badge bg="info" >{trip.participantsFromOtherCountries ? "Yes" : "No"}</Badge></samp>
+                </Div>
+              </p>
+            </details>
           </Card.Body>
+          <Card.Footer>
+            <ButtonGroup>
+              <Button variant="success">Join</Button>
+              <Button variant="info">Details</Button>
+              <Button variant="danger">Leave</Button>
+            </ButtonGroup>
+          </Card.Footer>
         </Card>
       ))}
     </div>
   );
 };
+
+
+
+
+const Div = styled.div`
+.badge{
+  font-size: 14px;
+  color: black;
+}
+
+samp{
+display: inline-block;
+margin: .25rem 0;
+margin-right: .5rem;
+}
+`
+
 
 export default TripList;

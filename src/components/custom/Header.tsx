@@ -47,7 +47,13 @@ export const Header: React.FC = () => {
         expand="lg"
         bg="success"
         className="text-white"
-        style={{ backgroundColor: "#4CAF50" }}
+        style={{ 
+          backgroundColor: "#4CAF50", 
+          height: '10vh',
+          position: "sticky",
+          top: 0,
+          zIndex: 10000
+        }}
       >
         <Container>
           <Navbar.Brand>

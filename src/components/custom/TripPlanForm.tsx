@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Tabs, Tab, Button, Row, Col } from "react-bootstrap";
 import GeneralInformationForm from "../forms/GeneralInformationForm";
 import CitiesPlanForm from "../forms/CitiesPlanForm";
@@ -16,14 +16,17 @@ const TripPlanForm = () => {
   const [activeTab, setActiveTab] = useState<string>("general");
   const data = useContext(dataContext);
 
+
+  
+
   const generateTripPlan = async () => {
-    
     await AsyncAction(data[DataEnum.Loadding].set, async ()=>{
       
       try{
         await toast.promise(
           async ()=>{
-          await TripPlanApi.create(dataTripPlan);
+            dataTripPlan.userId = data[DataEnum.User].value ? data[DataEnum.User].value.id : "674f90d7342de20f2d0cc194"; ;
+            await TripPlanApi.create(dataTripPlan);
           },
           {
           pending: 'creating trip pending',
@@ -36,7 +39,6 @@ const TripPlanForm = () => {
         console.error(error)
         toast.error(e.code);
         toast.error(e.message);
-        
       }
 
     });

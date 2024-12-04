@@ -16,6 +16,16 @@ export class UserApi {
         }
       });
   }
+
+  public static async getUsers(): Promise<IGoogleUser[]> {
+    const response = await axios.get(this.url,{
+      headers: {
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`
+      }
+    });
+    return response.data;
+  }
 }
 
 

@@ -17,6 +17,7 @@ import context from 'react-bootstrap/esm/AccordionContext';
 import { TripPlan } from './interfaces/TripPlan';
 import { TripPlanApi } from './services/TripPlanApi';
 import { AsyncAction } from './utils';
+import { UserApi } from './services/UserApi';
 
 export const dataContext = createContext<Array<{value:any,set:any}>>([]);
 
@@ -26,7 +27,8 @@ export enum DataEnum{
     IsUser,
     Loadding,
     Trips,
-    DownloadTrips
+    DownloadTrips,
+    Users
 }
 
 function App() {
@@ -36,6 +38,7 @@ function App() {
   const [loadding, setLoadding] = useState<boolean>(false);
   const [trips, setTrips] = useState<TripPlan[]>([]);
   const [downloadTrips, setDownloadTrips] = useState<boolean>(false);
+  const [users, setUsers] = useState<IGoogleUser[]>([]);
 
   const data = [
     {
@@ -61,6 +64,10 @@ function App() {
     {
       value: downloadTrips,
       set: setDownloadTrips
+    },
+    {
+      value: users,
+      set: setUsers
     }
   ]; 
 
@@ -81,10 +88,12 @@ function App() {
       (async () => {   
         await AsyncAction(setLoadding, async () => {
           try {
-            await toast.promise(
+            await toast.promise( 
               async () => {
-                const trip: TripPlan[] = await TripPlanApi.get();
-                setTrips(trip);      
+                const trips: TripPlan[] = await TripPlanApi.get();
+                const users: IGoogleUser[] = await UserApi.getUsers();
+                setTrips(trips)
+                setUsers(users)
               },
               {
                 pending: 'load trips',

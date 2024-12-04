@@ -51,6 +51,9 @@ const router = createBrowserRouter([
       {
         path:"/theme",
         element: <MyTheme/>
+      },
+      {
+        path:"/trip/:trip_plan_id",
       }
 
     ]
