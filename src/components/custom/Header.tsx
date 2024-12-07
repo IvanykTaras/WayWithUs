@@ -12,7 +12,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       context[DataEnum.User].set(JSON.parse(storedUser));
     }
@@ -20,7 +20,7 @@ export const Header: React.FC = () => {
 
   useEffect(() => {
     if (!context[DataEnum.AuthModalShow].value) {
-      const storedUser = sessionStorage.getItem("user");
+      const storedUser = localStorage.getItem("user");
       if (storedUser) {
         context[DataEnum.User].set(JSON.parse(storedUser));
       }
@@ -32,7 +32,7 @@ export const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("user");
     context[DataEnum.User].set(undefined);
     navigate("/");
   };
@@ -49,9 +49,9 @@ export const Header: React.FC = () => {
         className="text-white"
         style={{ 
           backgroundColor: "#4CAF50", 
-          height: '10vh',
-          position: "sticky",
-          top: 0,
+          // height: '10vh',
+          // position: "sticky",
+          // top: 0,
           zIndex: 10000
         }}
       >

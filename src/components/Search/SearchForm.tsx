@@ -28,7 +28,7 @@ const SearchForm: React.FC = () => {
         {/* <Col xs={12} md={4} lg={3} className="bg-light p-3"> 
           <SearchParam />
         </Col> */}
-        <Sidebar style={{padding:"0", borderTop:"1px solid #efefef", position:"sticky", top:"10vh", height:"90vh"}} collapsed={collapsed} collapsedWidth="50px" width="350px">
+        <Sidebar style={{padding:"0", borderTop:"1px solid #efefef", position:"sticky", top:"0vh", height:"90vh"}} collapsed={collapsed} collapsedWidth="50px" width="350px">
           <div style={{padding:".75rem"}}>
             <Button variant="outline-dark" onClick={()=>setCollapsed(!collapsed)} style={{width:"100%",padding:".25rem 0"}}><b>{ collapsed ? <IoMdMenu/> : <><IoMdMenu/> Hide</>}</b></Button>
             {!collapsed && <SearchParam trips={trips} setTrips={setTrips}/>}

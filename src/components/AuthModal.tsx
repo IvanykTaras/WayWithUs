@@ -97,8 +97,8 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
             }
 
             const data = await IdentityApi.login(checkLoginData);
-            sessionStorage.setItem("token", JSON.stringify(data.accessToken));
-            sessionStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("token", JSON.stringify(data.accessToken));
+            localStorage.setItem("user", JSON.stringify(data.user));
             handleClose();
           },
           {

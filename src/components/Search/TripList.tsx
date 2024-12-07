@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, Button, Badge, ButtonGroup } from "react-bootstrap";
+import { Card, Button, Badge, ButtonGroup, Modal } from "react-bootstrap";
 import { TripPlanApi } from "../../services/TripPlanApi";
 import { toast } from "react-toastify";
 import { TripPlan } from "../../interfaces/TripPlan";
@@ -11,6 +11,10 @@ import { GenderParticipantsValueList } from "../../enums/GenderParticipants";
 import { languageOptions } from "../forms/languages";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { travelTypesOptions } from "../forms/travelTypes";
+import { useNavigate } from "react-router-dom";
+import { UserApi } from "../../services/UserApi";
+import ChatApp from "../chat/ChatApp";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 interface TripListProps {
   trips: TripPlan[];
@@ -18,10 +22,103 @@ interface TripListProps {
 }
 
 const TripList: React.FC<TripListProps> = ({ trips, users }) => {
-  
+  const navigate = useNavigate();
+  const context = useContext(dataContext);
     
     
+  async function Details(id:string){
+    await downloadTripAndUser(id);
+    navigate(`/trip/${id}`);
+  }
 
+
+  async function downloadTripAndUser(tripId:string){   
+      await AsyncAction(context[DataEnum.Loadding].set, async () => {
+        try {
+          await toast.promise( 
+            async () => {
+              const trip: TripPlan = await TripPlanApi.getById(tripId);
+              const user: IGoogleUser = await UserApi.getUserById(trip.userId);
+              context[DataEnum.TripView].set({
+                trip: trip,
+                user: user
+              })
+            },
+            {
+              pending: 'load trip',
+              success: 'trip downloaded 👌',
+              error: 'some error 🤯'
+            }
+          );
+        } catch (error) {
+          const e = error as AxiosError;
+          console.error(error)
+          toast.error(e.code);
+          toast.error(e.message);
+        }
+      });
+  }
+  
+  async function addParticipant(tripId:string){
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( 
+          async () => {
+            const userId = context[DataEnum.User].value.id;
+            await TripPlanApi.addParticipant(tripId, userId);
+          },
+          {
+            pending: 'load participant add',
+            success: 'participant added 👌',
+            error: 'some error 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
+  }
+
+  async function removeParticipant(tripId:string){
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( 
+          async () => {
+            const userId = context[DataEnum.User].value.id;
+            await TripPlanApi.removeParticipant(tripId, userId);
+          },
+          {
+            pending: 'load participant remove',
+            success: 'participant removed 👌',
+            error: 'some error 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
+  }
+
+  function checkUserInParticipants(participants: string[]){
+    const userId = context[DataEnum.User].value.id;
+    console.log(participants.includes(userId))
+    return participants.includes(userId);
+  }
+
+  async function hadleShowChat(chatName:string){
+    context[DataEnum.Show].set(true)
+  }
+
+
+  
+
+ 
   // languages: string[];
 
   return ( 
@@ -47,7 +144,7 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
               }
               <samp key={index}><b>City:</b> 
               {trip.cityPlans.map((city, index) => (
-                <Badge bg="primary" style={{color:"black"}} className="mx-1">{city.originLocation}</Badge>
+                <Badge key={index} bg="primary" style={{color:"black"}} className="mx-1">{city.originLocation}</Badge>
               ))}
               </samp>
             </Div>
@@ -80,13 +177,30 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
           </Card.Body>
           <Card.Footer>
             <ButtonGroup>
-              <Button variant="success">Join</Button>
-              <Button variant="info">Details</Button>
-              <Button variant="danger">Leave</Button>
+              {
+                !checkUserInParticipants(trip.participants) ?
+                <Button variant="success" onClick={()=>addParticipant(trip.id as string)}>Join</Button>
+                : 
+                <>
+                <Button variant="danger" onClick={()=>removeParticipant(trip.id as string)}>Leave</Button>
+                <Button variant="primary" onClick={()=>hadleShowChat(trip.title)}>Chat</Button>
+                </>
+              }
+              <Button variant="info" onClick={()=>Details(trip?.id as string)}>Details</Button>
             </ButtonGroup>
           </Card.Footer>
         </Card>
       ))}
+
+
+
+      <Modal 
+        size="lg"
+        show={context[DataEnum.Show].value}
+        onHide={()=>context[DataEnum.Show].set(false)}
+        >
+        <ChatApp/>
+      </Modal>
     </div>
   );
 };
@@ -94,7 +208,7 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
 
 
 
-const Div = styled.div`
+export const Div = styled.div`
 .badge{
   font-size: 14px;
   color: black;

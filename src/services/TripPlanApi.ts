@@ -30,7 +30,7 @@ export class TripPlanApi {
       return (await axios.post(this.url, preparedData, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`
+          "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`
         } 
       })).data;
   }
@@ -44,7 +44,32 @@ export class TripPlanApi {
   }
 
   static async getById(id: string): Promise<TripPlan> {
-    return (await axios.get(`${this.url}/${id}`)).data;
+    return (await axios.get(`${this.url}/${id}`,{
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      }
+    })).data;
+  }
+
+  static async addParticipant(tripId: string, userId:string):Promise<void>{
+    console.log("tripid", tripId, "userid", `${userId}`)
+    await axios.post(this.url + `/${tripId}/addParticipant/${userId}`, {},{
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      }
+    })
+  }
+
+  static async removeParticipant(tripId: string, userId:string):Promise<void>{
+    console.log("tripid", tripId, "userid", `${userId}`)
+    await axios.delete(this.url + `/${tripId}/removeParticipant/${userId}`,{
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      }
+    })
   }
 }
 
