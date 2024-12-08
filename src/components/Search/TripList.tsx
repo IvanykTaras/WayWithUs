@@ -4,7 +4,7 @@ import { TripPlanApi } from "../../services/TripPlanApi";
 import { toast } from "react-toastify";
 import { TripPlan } from "../../interfaces/TripPlan";
 import { AsyncAction } from "../../utils";
-import { dataContext, DataEnum } from "../../App";
+import { dataContext, DataEnum, message } from "../../App";
 import { AxiosError } from "axios";
 import styled from "styled-components";
 import { GenderParticipantsValueList } from "../../enums/GenderParticipants";
@@ -14,7 +14,7 @@ import { travelTypesOptions } from "../forms/travelTypes";
 import { useNavigate } from "react-router-dom";
 import { UserApi } from "../../services/UserApi";
 import ChatApp from "../chat/ChatApp";
-import { HubConnectionBuilder } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 
 interface TripListProps {
   trips: TripPlan[];
@@ -25,6 +25,15 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
   const navigate = useNavigate();
   const context = useContext(dataContext);
     
+  // chat start
+  const [room, setRoom] = useState<string>("general");
+
+  
+
+  // chat end
+
+
+
     
   async function Details(id:string){
     await downloadTripAndUser(id);
@@ -104,15 +113,16 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
       }
     });
   }
-
+ 
   function checkUserInParticipants(participants: string[]){
     const userId = context[DataEnum.User].value.id;
-    console.log(participants.includes(userId))
     return participants.includes(userId);
   }
 
   async function hadleShowChat(chatName:string){
-    context[DataEnum.Show].set(true)
+    // setRoom(chatName);
+    // context[DataEnum.Show].set(true)
+    navigate(`/chat/${chatName}`);
   }
 
 
@@ -183,7 +193,7 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
                 : 
                 <>
                 <Button variant="danger" onClick={()=>removeParticipant(trip.id as string)}>Leave</Button>
-                <Button variant="primary" onClick={()=>hadleShowChat(trip.title)}>Chat</Button>
+                <Button variant="primary" onClick={()=>hadleShowChat(`${truncateText(trip?.id as string, 5)}, ${trip.title}` as string)}>Chat</Button>
                 </>
               }
               <Button variant="info" onClick={()=>Details(trip?.id as string)}>Details</Button>
@@ -194,13 +204,13 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
 
 
 
-      <Modal 
+      {/* <Modal 
         size="lg"
         show={context[DataEnum.Show].value}
         onHide={()=>context[DataEnum.Show].set(false)}
         >
-        <ChatApp/>
-      </Modal>
+        <ChatApp room={room}/>
+      </Modal> */}
     </div>
   );
 };
@@ -220,6 +230,8 @@ margin: .25rem 0;
 margin-right: .5rem;
 }
 `
-
+const truncateText = (text: string, maxLength: number): string => {
+  return text.length > maxLength ? '...' + text.slice(text.length-maxLength, text.length)  : text;
+};
 
 export default TripList;

@@ -10,10 +10,18 @@ import { AsyncAction } from "../utils";
 import { dataContext, DataEnum } from "../App";
 import { IGoogleUser } from "../interfaces/IGoogleUser";
 import { UserApi } from "../services/UserApi";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 interface IProps {
   show: boolean;
   handleClose: () => void;
+}
+
+
+export interface Notification {
+  user: string;
+  title: string;
+  notification: string;
 }
 
 export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
@@ -97,8 +105,12 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
             }
 
             const data = await IdentityApi.login(checkLoginData);
+            
+            await notificationSubscribe();
+            
             localStorage.setItem("token", JSON.stringify(data.accessToken));
             localStorage.setItem("user", JSON.stringify(data.user));
+            
             handleClose();
           },
           {
@@ -164,6 +176,25 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
       }
     });
   };
+
+  async function notificationSubscribe(){
+    const connection = new HubConnectionBuilder()
+        .withUrl("https://localhost:7137/chat")
+        .build();
+
+      connection.on("ReceiveNotification", (notification: string) => {
+        console.log("Notification",JSON.parse(notification));        
+      })
+
+      await connection.start();
+
+      const notification: Notification = {
+        user: "admin",
+        title: "Welcome",
+        notification: "Welcome to the chat room"
+      }
+      await connection.invoke("SendNotification", notification);
+  }
 
   return (
     <Modal show={show} onHide={handleClose} centered>

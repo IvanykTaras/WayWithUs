@@ -53,7 +53,6 @@ export class TripPlanApi {
   }
 
   static async addParticipant(tripId: string, userId:string):Promise<void>{
-    console.log("tripid", tripId, "userid", `${userId}`)
     await axios.post(this.url + `/${tripId}/addParticipant/${userId}`, {},{
       headers: {
         "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
@@ -63,7 +62,6 @@ export class TripPlanApi {
   }
 
   static async removeParticipant(tripId: string, userId:string):Promise<void>{
-    console.log("tripid", tripId, "userid", `${userId}`)
     await axios.delete(this.url + `/${tripId}/removeParticipant/${userId}`,{
       headers: {
         "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,

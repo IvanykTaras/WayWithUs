@@ -19,7 +19,7 @@ import { TripPlanApi } from './services/TripPlanApi';
 import { AsyncAction } from './utils';
 import { UserApi } from './services/UserApi';
 import { BlobOptions } from 'buffer';
-import { HubConnection } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 export const dataContext = createContext<Array<{value:any,set:any}>>([]);
 
@@ -119,8 +119,7 @@ function App() {
        setAuthModalShow(true);
     }   
   },[isUser]);
-
-
+  
 
   
   useEffect(() => {
@@ -130,7 +129,6 @@ function App() {
           try {
             await toast.promise( 
               async () => {
-                console.log(123)
                 const trips: TripPlan[] = await TripPlanApi.get();
                 const users: IGoogleUser[] = await UserApi.getUsers();
                 console.dir(trips)

@@ -19,7 +19,6 @@ export const TripDetails: React.FC = () => {
     const {trip_plan_id} = useParams<{trip_plan_id:string}>();
 
     useEffect(() => {
-        console.log(context[DataEnum.TripView].value)
         setTripView(context[DataEnum.TripView].value);
     }, []);
 
