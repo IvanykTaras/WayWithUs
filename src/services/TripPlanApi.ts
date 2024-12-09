@@ -120,5 +120,6 @@ export const testTripPlan: TripPlan = {
   "groupType": 0,
   "typeTravel": "string",
   "participantsFromOtherCountries": true,
-  "participants": []
+  "participants": [],
+  "openForBussines": false
 }

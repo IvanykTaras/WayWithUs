@@ -183,6 +183,7 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
         .build();
 
       connection.on("ReceiveNotification", (notification: string) => {
+        toast(JSON.parse(notification).notification);
         console.log("Notification",JSON.parse(notification));        
       })
 
