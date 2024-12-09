@@ -18,6 +18,8 @@ import { TripPlan } from './interfaces/TripPlan';
 import { TripPlanApi } from './services/TripPlanApi';
 import { AsyncAction } from './utils';
 import { UserApi } from './services/UserApi';
+import { BlobOptions } from 'buffer';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 export const dataContext = createContext<Array<{value:any,set:any}>>([]);
 
@@ -28,8 +30,16 @@ export enum DataEnum{
     Loadding,
     Trips,
     DownloadTrips,
-    Users
+    Users,
+    TripView,
+    DownloadTripView,
+    Show,
+    Connection,
+    UsersInRoom,
+    Messages
 }
+
+export type message = {user:string,message:string};
 
 function App() {
   const [authModalShow, setAuthModalShow] = useState(false); 
@@ -39,6 +49,12 @@ function App() {
   const [trips, setTrips] = useState<TripPlan[]>([]);
   const [downloadTrips, setDownloadTrips] = useState<boolean>(false);
   const [users, setUsers] = useState<IGoogleUser[]>([]);
+  const [tripView, setTripView] = useState<{trip: TripPlan, user: IGoogleUser}>();
+  const [downloadTripView, setDownloadTripView] = useState<{id:string,download:boolean}>({id:"",download:false});
+  const [show, setShow] = useState(false);
+  const [connection, setConnection] = useState<HubConnection>()
+  const [usersInRoom, setUsersInRoom] = useState<string[]>([]);
+  const [messages, setMessages] = useState<message[]>([])
 
   const data = [
     {
@@ -68,23 +84,46 @@ function App() {
     {
       value: users,
       set: setUsers
+    },
+    {
+      value: tripView,
+      set: setTripView
+    },
+    {
+      value: downloadTripView,
+      set: setDownloadTripView
+    },
+    {
+      value: show,
+      set: setShow
+    },
+    {
+      value: connection,
+      set: setConnection
+    },
+    {
+      value: usersInRoom,
+      set: setUsersInRoom
+    },
+    {
+      value: messages,
+      set: setMessages
     }
   ]; 
 
 
 
   useEffect(()=>{
-    const storedUser = sessionStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
     if (!storedUser) {
        setAuthModalShow(true);
     }   
   },[isUser]);
-
-
+  
 
   
   useEffect(() => {
-    if(downloadTrips){
+    if(downloadTrips && !tripView){
       (async () => {   
         await AsyncAction(setLoadding, async () => {
           try {
@@ -92,6 +131,7 @@ function App() {
               async () => {
                 const trips: TripPlan[] = await TripPlanApi.get();
                 const users: IGoogleUser[] = await UserApi.getUsers();
+                console.dir(trips)
                 setTrips(trips)
                 setUsers(users)
               },
@@ -114,13 +154,14 @@ function App() {
 
 
 
+
   const login = async ()=>{
     const data = await IdentityApi.login({
       email: "test@test.test",
       password: "test"
     })
 
-    sessionStorage.setItem("token", JSON.stringify(data.accessToken));
+    localStorage.setItem("token", JSON.stringify(data.accessToken));
     console.dir(data);
   }
 

@@ -21,10 +21,20 @@ export class UserApi {
     const response = await axios.get(this.url,{
       headers: {
           'Content-Type': 'application/json',
-          "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`
+          "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`
       }
     });
     return response.data;
+  }
+
+  public static async getUserById(id:string): Promise<IGoogleUser> {
+    return (await axios.get(`${this.url}/${id}`,{
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+          'Content-Type': 'application/json'
+      }
+    })).data;
+    
   }
 }
 

@@ -19,6 +19,7 @@ export interface TripPlan {
   typeTravel: string;
   participantsFromOtherCountries: boolean;
   participants: string[];
+  openForBussines: boolean;
 }
 
 export interface Age {

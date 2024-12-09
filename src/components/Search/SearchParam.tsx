@@ -112,7 +112,6 @@ const SearchParam: React.FC<SearchParamProps> = ({trips,setTrips}) => {
       selectedTypeOfTreval.map(type=>type.value).includes(trip.typeTravel))
     )
     .filter(trip =>{
-      console.log(selectedGender)
       return !selectedGender  ? true : selectedGender === GenderParticipantsValueList[trip.genderParticipants];
     })  
     .filter(trip =>withChildren ? trip.withChildren : true)

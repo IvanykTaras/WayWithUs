@@ -21,6 +21,8 @@ import { MyTheme } from './components/MyTheme';
 import { Theme } from '@radix-ui/themes';
 import TripPlanForm from './components/custom/TripPlanForm';
 import SearchForm from './components/Search/SearchForm';
+import { TripDetails } from './components/tripDetails/TripDetails';
+import ChatApp from './components/chat/ChatApp';
 
 
 
@@ -54,6 +56,11 @@ const router = createBrowserRouter([
       },
       {
         path:"/trip/:trip_plan_id",
+        element:<TripDetails/>
+      },
+      {
+        path: "/chat/:room",
+        element: <ChatApp/>
       }
 
     ]
