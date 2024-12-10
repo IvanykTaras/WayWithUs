@@ -1,20 +1,23 @@
 import React, { useContext, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, Badge, Dropdown, ListGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios, { AxiosError } from "axios";
 import { USER_INFO } from "../assets/ApiKeys";
-import { IdentityApi } from "../services/IdentityApi";
+import { IdentityApi, LoginReponse } from "../services/IdentityApi";
 import { AsyncAction } from "../utils";
 import { dataContext, DataEnum } from "../App";
 import { IGoogleUser } from "../interfaces/IGoogleUser";
 import { UserApi } from "../services/UserApi";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import context from "react-bootstrap/esm/AccordionContext";
 
 interface IProps {
   show: boolean;
   handleClose: () => void;
+  setNotify: React.Dispatch<React.SetStateAction<Notification[]>>;
+  notify: Notification[];
 }
 
 
@@ -24,7 +27,7 @@ export interface Notification {
   notification: string;
 }
 
-export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
+export const AuthModal: React.FC<IProps> = ({ show, handleClose, setNotify, notify }) => {
   const [createUser, setCreateUser] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -34,9 +37,10 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
   const [name, setName] = useState("");
   const [picture, setPicture] = useState("");
   const [invalidPicture, setInvalidPicture] = useState(false);
+
   const data = useContext(dataContext);
 
-  const auth = useGoogleLogin({
+  const auth = useGoogleLogin({  
     onSuccess: (tokenResponse) => getUserProfile(tokenResponse.access_token),
     onError: () => toast.error("Google sign-in failed"),
   });
@@ -106,8 +110,9 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
 
             const data = await IdentityApi.login(checkLoginData);
             
-            await notificationSubscribe();
+            await notificationSubscribe(data);
             
+
             localStorage.setItem("token", JSON.stringify(data.accessToken));
             localStorage.setItem("user", JSON.stringify(data.user));
             
@@ -177,22 +182,34 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose }) => {
     });
   };
 
-  async function notificationSubscribe(){
+  async function notificationSubscribe(data: LoginReponse) {
     const connection = new HubConnectionBuilder()
         .withUrl("https://localhost:7137/chat")
         .build();
 
-      connection.on("ReceiveNotification", (notification: string) => {
-        toast(JSON.parse(notification).notification);
+      await connection.on("ReceiveNotification", (user: string, title:string, notification:string) => {
+        toast.info(<>
+          <ListGroup>
+            <ListGroup.Item> 
+              <Badge>@{user}</Badge><br/>
+              <Badge bg="info">!{title}</Badge><br /> 
+              <p>{notification}</p>
+            </ListGroup.Item>
+          </ListGroup>
+            
+        </>);
+ 
+        setNotify((notifyArr) => [ {user: user, title: title, notification: notification},...notifyArr]);
+
         console.log("Notification",JSON.parse(notification));        
       })
 
       await connection.start();
 
       const notification: Notification = {
-        user: "admin",
-        title: "Welcome",
-        notification: "Welcome to the chat room"
+        user: data.user.email,
+        title: "User sign in", 
+        notification: "User sign in now 🎉"
       }
       await connection.invoke("SendNotification", notification);
   }
