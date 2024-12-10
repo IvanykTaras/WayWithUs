@@ -8,6 +8,10 @@ import { useContext, useEffect, useState } from "react";
 import { TripPlan } from "../../interfaces/TripPlan";
 import { dataContext, DataEnum } from "../../App";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
+import { AsyncAction } from "../../utils";
+import { toast } from "react-toastify";
+import { TripPlanApi } from "../../services/TripPlanApi";
+import { AxiosError } from "axios";
 
 export const TripDetails: React.FC = () => {
   const [tripView, setTripView] = useState<{ trip: TripPlan; user: IGoogleUser }>();
@@ -26,12 +30,69 @@ export const TripDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    setTripView(context[DataEnum.TripView].value);
+    setTripView(()=>context[DataEnum.TripView].value);
+    console.log(tripView)
   }, [context]);
 
   const handleBack = () => {
     navigate(-1); 
   };
+
+
+  function checkUserInParticipants(participants: string[]){
+    console.log(participants);
+
+    const userId = context[DataEnum.User].value.id;
+    console.log(userId)
+    return participants.includes(userId);
+  }
+
+  async function addParticipant(tripId:string){
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( 
+          async () => {
+            const userId = context[DataEnum.User].value.id;
+            await TripPlanApi.addParticipant(tripId, userId);
+          },
+          {
+            pending: 'load participant add',
+            success: 'participant added 👌',
+            error: 'some error 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
+  }
+
+  async function removeParticipant(tripId:string){
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( 
+          async () => {
+            const userId = context[DataEnum.User].value.id;
+            await TripPlanApi.removeParticipant(tripId, userId);
+          },
+          {
+            pending: 'load participant remove',
+            success: 'participant removed 👌',
+            error: 'some error 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
+  }
+
 
   return (
     <Card className="mb-4 shadow-sm border-0 rounded-4">
@@ -154,9 +215,6 @@ export const TripDetails: React.FC = () => {
         <ButtonGroup>
           <Button variant="outline-secondary" className="rounded-4 px-4" onClick={handleBack}>
             Back
-          </Button>
-          <Button variant="success" className="rounded-4 px-4">
-            Join
           </Button>
         </ButtonGroup>
       </Card.Footer>
