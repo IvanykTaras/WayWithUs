@@ -92,11 +92,11 @@ export const Header: React.FC = () => {
                   </Nav.Link>
                   <Nav.Link
                     as={Link}
-                    to={"/my-trip"}
+                    to={"/my-trips"}
                     style={{
-                      color: location.pathname === "/my-trip" ? "#FFD700" : "#FFFFFF",
+                      color: location.pathname === "/my-trips" ? "#FFD700" : "#FFFFFF",
                       margin: "0 10px",
-                      borderBottom: location.pathname === "/my-trip" ? "2px solid #FFD700" : "none"
+                      borderBottom: location.pathname === "/my-trips" ? "2px solid #FFD700" : "none"
                     }}
                   >
                     My Trips

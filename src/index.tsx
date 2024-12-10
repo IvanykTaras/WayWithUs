@@ -16,7 +16,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { CLIEND_ID_OAUTH } from './assets/ApiKeys';
 import { Hero } from './components/custom/Hero';
 // import { TripView } from './components/TripVIew';
-import { MyTrips } from './components/MyTrips';
+import MyTripForm from './components/MyTrips/MyTripForm';
 import { MyTheme } from './components/MyTheme';
 import { Theme } from '@radix-ui/themes';
 import TripPlanForm from './components/custom/TripPlanForm';
@@ -46,10 +46,10 @@ const router = createBrowserRouter([
         path:"/search",
         element:<SearchForm/> 
       },
-      // {
-      //   path:"/my-trips",
-      //   element:<MyTrips/>
-      // },
+      {
+        path:"/my-trips",
+        element:<MyTripForm/>
+      },
       {
         path:"/theme",
         element: <MyTheme/>
