@@ -19,7 +19,7 @@ type UserLoginDat = {
     password: string
   }
 
-interface LoginReponse {
+export interface LoginReponse {
     user: IGoogleUser,
     accessToken: string,
     expiresIn: number

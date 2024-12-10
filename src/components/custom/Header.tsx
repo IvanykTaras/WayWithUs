@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Container, Nav, Navbar, Dropdown, Alert, ListGroup, Badge } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Box, Flex, Avatar, Text } from "@radix-ui/themes";
@@ -6,8 +6,9 @@ import { dataContext, DataEnum } from "../../App";
 import { LogoSVG } from "../../assets/LogoSVG";
 import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
 import { IoNotificationsCircle } from "react-icons/io5";
+import { Notification } from "../AuthModal";
 
-export const Header: React.FC = () => {
+export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
   const context = useContext(dataContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,6 +42,12 @@ export const Header: React.FC = () => {
   async function createTripTest() {
     await TripPlanApi.create(testTripPlan);
   }
+
+  const handleDeleteNotification = (index: number) => {
+    const updatedNotifications = [...context[DataEnum.Notifies].value];
+    updatedNotifications.splice(index, 1);
+    context[DataEnum.Notifies].set(updatedNotifications);
+  };
 
   return (
     <>
@@ -147,15 +154,21 @@ export const Header: React.FC = () => {
                       height: "40px",
                       textAlign: "center",
                       alignContent: "center",
-                    }}>2</div>
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu style={{width:"300px"}}>
+                    }}>{context[DataEnum.Notifies].value.length}</div>
+                  </Dropdown.Toggle> 
+                  <Dropdown.Menu style={{width:"500px", maxHeight:"50vh", overflowY:"scroll"}}>
                   <ListGroup>
-                    <ListGroup.Item> <Badge>adsf</Badge> Cras justo odio</ListGroup.Item>
-                    <ListGroup.Item><Badge>adsf</Badge>Dapibus ac facilisis in</ListGroup.Item>
-                    <ListGroup.Item><Badge>adsf</Badge>Morbi leo risus</ListGroup.Item>
-                    <ListGroup.Item><Badge>adsf</Badge>Porta ac consectetur ac</ListGroup.Item>
-                    <ListGroup.Item><Badge>adsf</Badge>Vestibulum at eros</ListGroup.Item>
+                    { 
+                      notify.map((notify, index) => {
+                        return (
+                          <ListGroup.Item className="notification" key={index} onClick={() => handleDeleteNotification(index)}> 
+                            <Badge bg="secondary">{index+1}</Badge><Badge>@{notify.user}</Badge><br/>
+                            <Badge bg="info">!{notify.title}</Badge><br /> 
+                            {notify.notification} 
+                          </ListGroup.Item>
+                        );
+                      })
+                    }
                   </ListGroup>
                   </Dropdown.Menu>
                 </Dropdown>
@@ -187,9 +200,9 @@ export const Header: React.FC = () => {
                   </Box>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item>
+                  {/* <Dropdown.Item>
                     <Link to={"/create-trip"}>Profile</Link>
-                  </Dropdown.Item>
+                  </Dropdown.Item> */}
                   <Dropdown.Item>Settings</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                 </Dropdown.Menu>

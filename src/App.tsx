@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { Header } from './components/custom/Header';
 import { Theme } from '@radix-ui/themes/dist/cjs/components/theme';
-import { AuthModal } from './components/AuthModal';
+import { AuthModal, Notification } from './components/AuthModal';
 import { Value } from '@radix-ui/themes/dist/cjs/components/data-list';
 import { IGoogleUser } from './interfaces/IGoogleUser';
 import { Footer } from './components/custom/Footer';
@@ -36,7 +36,7 @@ export enum DataEnum{
     Show,
     Connection,
     UsersInRoom,
-    Messages
+    Notifies
 }
 
 export type message = {user:string,message:string};
@@ -54,7 +54,7 @@ function App() {
   const [show, setShow] = useState(false);
   const [connection, setConnection] = useState<HubConnection>()
   const [usersInRoom, setUsersInRoom] = useState<string[]>([]);
-  const [messages, setMessages] = useState<message[]>([])
+  const [notify, setNotify] = useState<Notification[]>([])
 
   const data = [
     {
@@ -106,8 +106,8 @@ function App() {
       set: setUsersInRoom
     },
     {
-      value: messages,
-      set: setMessages
+      value: notify,
+      set: setNotify
     }
   ]; 
 
@@ -152,6 +152,10 @@ function App() {
     }
   }, [downloadTrips]);
 
+  useEffect(() => {
+    console.count("Notify")
+    console.log("App notify:",notify)
+  }, [notify]);
 
 
 
@@ -173,12 +177,14 @@ function App() {
     <div className="app">
       <Theme radius='large' scaling='110%' >
       {/* <Theme accentColor="red" grayColor="sand" panelBackground="solid" radius="full" appearance='dark'> */}
-        <Header/>
+        <Header notify={notify}/>
         {loadding ? <Loadding/> : <Outlet/>}
         {/* <TravelForm/> */}
         <AuthModal
           show={authModalShow}
           handleClose={() => setAuthModalShow(false)}
+          setNotify={setNotify}
+          notify={notify}
         />
         <Footer/>
       </Theme>
