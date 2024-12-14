@@ -4,7 +4,7 @@ import GeneralInformationForm from "../forms/GeneralInformationForm";
 import CitiesPlanForm from "../forms/CitiesPlanForm";
 import CityDetailsForm from "../forms/CityDetailsForm";
 import { TripPlan, CityPlan } from "../../interfaces/TripPlan";
-import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
+import { testTripPlan, TripPlanApi, tripPlanMock } from "../../services/TripPlanApi";
 import textShortener from "../../hooks/useTextShortener";
 import { toast } from "react-toastify";
 import {  dataContext, DataEnum } from "../../App";
@@ -12,7 +12,7 @@ import { AsyncAction } from "../../utils";
 import { AxiosError } from "axios";
 
 const TripPlanForm = () => {
-  const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(testTripPlan);
+  const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(tripPlanMock);
   const [activeTab, setActiveTab] = useState<string>("general");
   const data = useContext(dataContext);
 

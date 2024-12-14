@@ -9,7 +9,6 @@ import '@radix-ui/themes/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { CreateTrip } from './components/CreateTrip';
 import { Header } from './components/custom/Header';
 import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from '@react-oauth/google';

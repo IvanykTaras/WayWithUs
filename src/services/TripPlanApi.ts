@@ -103,7 +103,27 @@ export class TripPlanApi {
 
 
 
-
+export const tripPlanMock: TripPlan = {
+  userId: "",
+  title: "",
+  description: "",
+  startDate: null,
+  endDate: null,
+  cityPlans: [],
+  languages: [],
+  age: {
+    min: 0,
+    max: 0
+  },
+  genderParticipants: 0,
+  withChildren: false,
+  budget: 0,
+  groupType: 0,
+  typeTravel: "",
+  participantsFromOtherCountries: false,
+  participants: [],
+  openForBussines: false
+}
 
 export const testTripPlan: TripPlan = {
   "userId": "66e337245e26008a2f5331d6",
