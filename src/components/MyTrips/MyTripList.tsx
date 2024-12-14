@@ -3,9 +3,15 @@ import { Card, Row, Col } from "react-bootstrap";
 import { travelTypesOptions } from "../forms/travelTypes";
 import { languageOptions } from "../forms/languages";
 import { accommodationOptions } from "../forms/AccommodationOption";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { TripPlanApi } from "../../services/TripPlanApi";
 import { TripPlan } from "../../interfaces/TripPlan";
+import { AsyncAction } from "../../utils";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { dataContext, DataEnum } from "../../App";
+import { useNavigate } from "react-router-dom";
+import { UserApi } from "../../services/UserApi";
 import '../../index.css';
 
 interface MyTripListProps {
@@ -14,15 +20,49 @@ interface MyTripListProps {
 }
 
 const MyTripList: React.FC<MyTripListProps> = ({ trips, users }) => {
+  const navigate = useNavigate();
   const context = useContext(dataContext);
 
   const user: IGoogleUser = context[DataEnum.User].value;
+  
+
+  async function TripCard(id: string) {
+    await downloadTripAndUser(id);
+    navigate(`/my-trips/${id}`);
+  }
+
+  async function downloadTripAndUser(tripId: string) {
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise(
+          async () => {
+            const trip: TripPlan = await TripPlanApi.getById(tripId);
+            const user: IGoogleUser = await UserApi.getUserById(trip.userId);
+            context[DataEnum.TripView].set({
+              trip: trip,
+              user: user
+            })
+          },
+          {
+            pending: 'load trip',
+            success: 'trip downloaded 👌',
+            error: 'some error 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
+  }
 
   const filteredTrips = trips.filter(
     (trip) =>
-      trip.userId === user.id ||
       trip.participants.includes(user.id!)
   );
+
 
   useEffect(() => {
     context[DataEnum.DownloadTrips].set(!context[DataEnum.DownloadTrips].value);
@@ -62,6 +102,7 @@ const MyTripList: React.FC<MyTripListProps> = ({ trips, users }) => {
           className="mb-4 shadow-sm"
           key={index}
           style={{ cursor: "pointer" }}
+          onClick={() => TripCard(trip?.id as string)}
         >
           <Row className="g-0">
             <Col md={4} className="d-flex align-items-center justify-content-center">
@@ -126,7 +167,7 @@ const MyTripList: React.FC<MyTripListProps> = ({ trips, users }) => {
                               : ""}{" "}
                       <br />
                       <strong>With Children:</strong> {trip.withChildren ? "Yes" : "No"} <br />
-                      <strong>Number of participants:</strong> {trip.groupType} <br />
+                      <strong>Participants:</strong> {trip.participants.length}/{trip.groupType} <br />
                       <strong>Participants From Other Countries:</strong>{" "}
                       {trip.participantsFromOtherCountries ? "Yes" : "No"} <br />
                       <strong>Creator:</strong>{" "}

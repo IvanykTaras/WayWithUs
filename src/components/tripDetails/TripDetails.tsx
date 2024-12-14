@@ -69,35 +69,9 @@ export const TripDetails: React.FC = () => {
       }
     });
   }
-
-  async function removeParticipant(tripId:string){
-    await AsyncAction(context[DataEnum.Loadding].set, async () => {
-      try {
-        await toast.promise( 
-          async () => {
-            const userId = context[DataEnum.User].value.id;
-            await TripPlanApi.removeParticipant(tripId, userId);
-          },
-          {
-            pending: 'load participant remove',
-            success: 'participant removed 👌',
-            error: 'some error 🤯'
-          }
-        );
-      } catch (error) {
-        const e = error as AxiosError;
-        console.error(error)
-        toast.error(e.code);
-        toast.error(e.message);
-      }
-    });
-  }
-
-
   return (
     <Card className="mb-4 shadow-sm border-0 rounded-4">
       <Row className="g-0 align-items-start">
-        {/* Левая колонка с изображением */}
         <Col md={4}>
           <div className="d-flex align-items-start justify-content-center p-3">
             <Card.Img
@@ -114,7 +88,6 @@ export const TripDetails: React.FC = () => {
           </div>
         </Col>
 
-        {/* Средняя колонка с основной информацией */}
         <Col md={8}>
           <Card.Body className="p-4">
             <Card.Title
@@ -122,7 +95,7 @@ export const TripDetails: React.FC = () => {
               style={{ fontSize: "1.5rem", fontWeight: "bold" }}
             >
               <span className="text-primary">{tripView?.trip.title}</span>
-              <Badge bg="info" className="text-uppercase">{tripView?.user.name || "Creator"}</Badge>
+              <Badge bg="info" className="text-uppercase">Created by {tripView?.user.name || "Creator"}</Badge>
             </Card.Title>
             <Card.Text
               className="mb-3 text-muted"
@@ -170,44 +143,44 @@ export const TripDetails: React.FC = () => {
                   {GenderParticipantsValueList[tripView?.trip.genderParticipants || 0]} <br />
                   <strong>With Children:</strong> {tripView?.trip.withChildren ? "Yes" : "No"}{" "}
                   <br />
-                  <strong>Number of participants:</strong> {tripView?.trip.groupType} <br />
+                  <strong>Participants:</strong> {tripView?.trip.participants.length}/{tripView?.trip.groupType} <br />
                   <strong>Participants From Other Countries:</strong>{" "}
                   {tripView?.trip.participantsFromOtherCountries ? "Yes" : "No"}
                 </Card.Text>
               </Col>
             </Row>
             <Row>
-              {tripView?.trip.cityPlans.map((cityPlan, index) => (
-                <Col md={6} key={index} className="mb-4">
-                  <Card className="shadow-sm rounded-4 border-0">
-                    <Card.Body>
-                      <h5 style={{ marginTop: index > 0 ? "20px" : "0px" }} className="text-dark">
-                        {cityPlan.originLocation.split(",")[0]}
-                      </h5>
-                      <p>
-                        <strong>First day:</strong> {formatDate(cityPlan.startDate)} <br />
-                        <strong>Last day:</strong> {formatDate(cityPlan.endDate)} <br />
-                        <strong>Accommodation:</strong>{" "}
-                        {
-                          accommodationOptions.find(
-                            (t) => t.value === cityPlan.accommodations[0].name
-                          )?.label
-                        }{" "}
-                        <br />
-                        <strong>Places to visit:</strong>{" "}
-                        {cityPlan.places
-                          .map((place) => {
-                            const location = place.location;
-                            return `${location.includes(",") ? location.split(",")[0] : location}`;
-                          })
-                          .join(", ")}
-                        <br />
-                      </p>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
+              <Col md={12}>
+                {tripView?.trip.cityPlans.map((cityPlan, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom: index < tripView.trip.cityPlans.length - 1 ? "5px" : "20px", 
+                      marginTop: "15px", 
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontWeight: "bold", 
+                        marginRight: "10px",
+                        fontSize: "1rem", 
+                      }}
+                    >
+                      Planned places in {cityPlan.originLocation.split(",")[0]}:
+                    </span>
+                    <span>
+                      {cityPlan.places
+                        .map((place) => {
+                          const location = place.location;
+                          return `${location.includes(",") ? location.split(",")[0] : location}`;
+                        })
+                        .join(", ")}
+                    </span>
+                  </div>
+                ))}
+              </Col>
             </Row>
+
           </Card.Body>
         </Col>
       </Row>

@@ -104,7 +104,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
               <GooglePlacesAutocomplete
                 apiKey={PLACES_API_KEY}
                 selectProps={{
-                  placeholder: index === 0 ? "Cities From" : `Cities To ${index}`,
+                  placeholder: index === 0 ? "Cities from" : `Cities to ${index}`,
                   onChange: (value) => handleCityChange(value, index, "originLocation"),
                   styles: {
                     control: (base) => ({

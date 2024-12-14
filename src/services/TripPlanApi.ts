@@ -69,7 +69,28 @@ export class TripPlanApi {
       }
     })
   }
+
+  static async update(id: string, data: TripPlan): Promise<void> {
+    const preparedData = {
+      ...data,
+      startDate: this.addOneDay(data.startDate),
+      endDate: this.addOneDay(data.endDate),
+      cityPlans: data.cityPlans.map((cityPlan) => ({
+        ...cityPlan,
+        startDate: this.addOneDay(cityPlan.startDate),
+        endDate: this.addOneDay(cityPlan.endDate),
+      })),
+    };
+
+    await axios.put(`${this.url}/${id}`, preparedData, {
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      },
+    });
+  }
 }
+
 
 
 

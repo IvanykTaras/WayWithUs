@@ -61,6 +61,16 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
     cityPlan.set({ ...cityPlan.data, places: updatedPlaces });
   };
 
+  const handleAccommodationDescriptionChange = (input: HTMLInputElement, accommodationIndex: number) => {
+    const updatedAccommodations = cityPlan.data.accommodations.map((accommodation, index) =>
+      index === accommodationIndex
+        ? { ...accommodation, description: input.value }
+        : accommodation
+    );
+
+    cityPlan.set({ ...cityPlan.data, accommodations: updatedAccommodations });
+  };
+
   const handleAddPlace = () => {
     const newPlace: Place = {
       location: "",
@@ -110,7 +120,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
         </Col>
         <Col md={12} className="mt-4">
         <Form.Group controlId="tripDescription" className="mb-3">
-          <Form.Label>Trip Description</Form.Label>
+          <Form.Label>City description</Form.Label>
           <Form.Control
             as="textarea"
             rows={3}
@@ -130,7 +140,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group controlId="AccommodationName">
-            <Form.Label>Type of Accommodation</Form.Label>
+            <Form.Label>Type of accommodation</Form.Label>
             <Select
               options={accommodationOptions}
               value={accommodationOptions.find(
@@ -159,6 +169,18 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
             />
           </Form.Group>
         </Col>
+        <Form.Group controlId="AccommodationDescription" className="mb-3">
+          <Form.Label>Accommodation description</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter small description"
+            value={cityPlan.data.accommodations[0]?.description || ""}
+            onChange={(e) =>
+              handleAccommodationDescriptionChange(e.target as HTMLInputElement, 0)
+            }
+          />
+        </Form.Group>
+
       </Row>
 
       {/* Места для посещения */}

@@ -133,7 +133,7 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
                   }}
                   onClick={handleSignInClick}
                 >
-                  Войти
+                  Sing in
                 </Button>
               ) : (<>
                 {/* Notifications */}
