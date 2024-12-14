@@ -6,7 +6,7 @@ interface ImageCarouselProps {
   interval?: number; // Интервал времени в миллисекундах, по умолчанию 10 секунд
 }
 
-export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 10000 }) => {
+export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 3000 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {

@@ -67,14 +67,15 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
               <Form.Label>Start Date</Form.Label>
               <Form.Control
                 type="date"
-                value={dataTripPlan.data.startDate ? dataTripPlan.data.startDate : "null" }
-                onChange={(e) =>
+                value={ dataTripPlan.data.startDate ? dataTripPlan.data.startDate.split("T")[0] : "null" }
+                onChange={(e) =>{
+                  console.log(e.target.value);
                   dataTripPlan.set({
                     ...dataTripPlan.data,
                     startDate: e.target.value ? e.target.value : null,
                   })
-                }
-                disabled={noDates}
+                }}
+                disabled={noDates} 
               />
             </Form.Group>
           </Col>
@@ -83,7 +84,7 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
               <Form.Label>End Date</Form.Label>
               <Form.Control
                 type="date"
-                value={dataTripPlan.data.endDate ? dataTripPlan.data.endDate : ""}
+                value={dataTripPlan.data.endDate ? dataTripPlan.data.endDate.split("T")[0] : ""}
                 onChange={(e) =>
                   dataTripPlan.set({
                     ...dataTripPlan.data,

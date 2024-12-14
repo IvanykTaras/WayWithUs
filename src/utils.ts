@@ -10,3 +10,8 @@ export function findLabelByValue(value: string): TravelTypeOption | null {
     const option = travelTypesOptions.find(option => option.value === value);
     return option ? option: null;
 }
+
+
+export const truncateText = (text: string, maxLength: number): string => {
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};

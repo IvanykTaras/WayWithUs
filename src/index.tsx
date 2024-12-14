@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         element: <TripDetails />,
       },
       {
-        path: "/chat/:room",
+        path: "/chat/:room/:tripId",
         element: <ChatApp />,
       },
     ],

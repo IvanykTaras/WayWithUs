@@ -35,38 +35,38 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
 
 
     
-  async function Details(id:string){
-    await downloadTripAndUser(id);
-    navigate(`/trip/${id}`);
-  }
+  // async function Details(id:string){
+  //   await downloadTripAndUser(id);
+  //   navigate(`/trip/${id}`);
+  // }
 
 
-  async function downloadTripAndUser(tripId:string){   
-      await AsyncAction(context[DataEnum.Loadding].set, async () => {
-        try {
-          await toast.promise( 
-            async () => {
-              const trip: TripPlan = await TripPlanApi.getById(tripId);
-              const user: IGoogleUser = await UserApi.getUserById(trip.userId);
-              context[DataEnum.TripView].set({
-                trip: trip,
-                user: user
-              })
-            },
-            {
-              pending: 'load trip',
-              success: 'trip downloaded 👌',
-              error: 'some error 🤯'
-            }
-          );
-        } catch (error) {
-          const e = error as AxiosError;
-          console.error(error)
-          toast.error(e.code);
-          toast.error(e.message);
-        }
-      });
-  }
+  // async function downloadTripAndUser(tripId:string){   
+  //     await AsyncAction(context[DataEnum.Loadding].set, async () => {
+  //       try {
+  //         await toast.promise( 
+  //           async () => {
+  //             const trip: TripPlan = await TripPlanApi.getById(tripId);
+  //             const user: IGoogleUser = await UserApi.getUserById(trip.userId);
+  //             context[DataEnum.TripView].set({
+  //               trip: trip,
+  //               user: user
+  //             })
+  //           },
+  //           {
+  //             pending: 'load trip',
+  //             success: 'trip downloaded 👌',
+  //             error: 'some error 🤯'
+  //           }
+  //         );
+  //       } catch (error) {
+  //         const e = error as AxiosError;
+  //         console.error(error)
+  //         toast.error(e.code);
+  //         toast.error(e.message);
+  //       }
+  //     });
+  // }
   
   async function addParticipant(tripId:string){
     await AsyncAction(context[DataEnum.Loadding].set, async () => {
@@ -119,10 +119,43 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
     return participants.includes(userId);
   }
 
-  async function hadleShowChat(chatName:string){
+  async function hadleShowChat(chatName:string,tripId:string){
     // setRoom(chatName);
     // context[DataEnum.Show].set(true)
-    navigate(`/chat/${chatName}`);
+    navigate(`/chat/${chatName}/${tripId}`);
+  }
+
+
+  async function Details(id: string) {
+    await downloadTripAndUser(id);
+    navigate(`/my-trips/${id}`);
+  }
+
+  async function downloadTripAndUser(tripId: string) {
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise(
+          async () => {
+            const trip: TripPlan = await TripPlanApi.getById(tripId);
+            const user: IGoogleUser = await UserApi.getUserById(trip.userId);
+            context[DataEnum.TripView].set({
+              trip: trip,
+              user: user
+            })
+          },
+          {
+            pending: 'load trip',
+            success: 'trip downloaded 👌',
+            error: 'some error 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error)
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
   }
 
 
@@ -193,7 +226,7 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
                 : 
                 <>
                 <Button variant="danger" onClick={()=>removeParticipant(trip.id as string)}>Leave</Button>
-                <Button variant="primary" onClick={()=>hadleShowChat(`${truncateText(trip?.id as string, 5)}, ${trip.title}` as string)}>Chat</Button>
+                <Button variant="primary" onClick={()=>hadleShowChat(`${truncateText(trip?.id as string, 5)}, ${trip.title}` as string, trip.id as string)}>Chat</Button>
                 </>
               }
               <Button variant="info" onClick={()=>Details(trip?.id as string)}>Details</Button>

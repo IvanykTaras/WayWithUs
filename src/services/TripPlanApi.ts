@@ -3,6 +3,7 @@ import { BudgetType } from "../enums/BudgetType";
 import { GroupType } from "../enums/GroupType";
 import { GenderParticipants } from "../enums/GenderParticipants";
 import { Transport, TripPlan } from "../interfaces/TripPlan";
+import { IGoogleUser } from "../interfaces/IGoogleUser";
 
 export class TripPlanApi {
   private static readonly url: string = "https://localhost:7137/api/TripPlan"; 
@@ -30,7 +31,7 @@ export class TripPlanApi {
       return (await axios.post(this.url, preparedData, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`
+          "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`
         } 
       })).data;
   }
@@ -46,7 +47,7 @@ export class TripPlanApi {
   static async getById(id: string): Promise<TripPlan> {
     return (await axios.get(`${this.url}/${id}`,{
       headers: {
-        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
         "Type-Content": "application/json"
       }
     })).data;
@@ -55,7 +56,7 @@ export class TripPlanApi {
   static async addParticipant(tripId: string, userId:string):Promise<void>{
     await axios.post(this.url + `/${tripId}/addParticipant/${userId}`, {},{
       headers: {
-        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
         "Type-Content": "application/json"
       }
     })
@@ -64,10 +65,19 @@ export class TripPlanApi {
   static async removeParticipant(tripId: string, userId:string):Promise<void>{
     await axios.delete(this.url + `/${tripId}/removeParticipant/${userId}`,{
       headers: {
-        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
         "Type-Content": "application/json"
       }
     })
+  }
+
+  static async paritcipants(tripId: string):Promise<IGoogleUser[]>{
+    return (await axios.get(this.url + `/${tripId}/participants`,{
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      }
+    })).data;
   }
 
   static async update(id: string, data: TripPlan): Promise<void> {
@@ -84,7 +94,7 @@ export class TripPlanApi {
 
     await axios.put(`${this.url}/${id}`, preparedData, {
       headers: {
-        "Authorization": `Bearer ${JSON.parse(localStorage.getItem("token") as string)}`,
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
         "Type-Content": "application/json"
       },
     });

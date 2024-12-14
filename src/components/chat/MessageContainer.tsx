@@ -7,7 +7,7 @@ interface IProps{
 
 export const MesssageContainer: React.FC<IProps> = ({messages}) => {
     const messageRef = useRef<HTMLDivElement>(null);
-    const loggedInUser = localStorage.getItem("loggedInUser");
+    const loggedInUser = sessionStorage.getItem("loggedInUser");
 
     useEffect(()=>{
         if(messageRef && messageRef.current){

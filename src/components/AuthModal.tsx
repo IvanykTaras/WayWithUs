@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import axios, { AxiosError } from "axios";
 import { USER_INFO } from "../assets/ApiKeys";
 import { IdentityApi, LoginReponse } from "../services/IdentityApi";
-import { AsyncAction } from "../utils";
+import { AsyncAction, truncateText } from "../utils";
 import { dataContext, DataEnum } from "../App";
 import { IGoogleUser } from "../interfaces/IGoogleUser";
 import { UserApi } from "../services/UserApi";
@@ -113,8 +113,8 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose, setNotify, noti
             await notificationSubscribe(data);
             
 
-            localStorage.setItem("token", JSON.stringify(data.accessToken));
-            localStorage.setItem("user", JSON.stringify(data.user));
+            sessionStorage.setItem("token", JSON.stringify(data.accessToken));
+            sessionStorage.setItem("user", JSON.stringify(data.user));
             
             handleClose();
           },
@@ -192,10 +192,10 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose, setNotify, noti
           <ListGroup>
             <ListGroup.Item> 
               <Badge>@{user}</Badge><br/>
-              <Badge bg="info">!{title}</Badge><br /> 
-              <p>{notification}</p>
+              <Badge bg="info">!{truncateText(title,20)}</Badge><br /> 
+              <p>{truncateText(notification,20)}</p>
             </ListGroup.Item>
-          </ListGroup>
+          </ListGroup> 
             
         </>);
  

@@ -102,8 +102,10 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
           <Col xs={12}>
             <Form.Group controlId={`citiesFrom-${index}`} className="mb-0">
               <GooglePlacesAutocomplete
+                
                 apiKey={PLACES_API_KEY}
                 selectProps={{
+                  value: {label: cityPlan.originLocation, value: cityPlan.originLocation},
                   placeholder: index === 0 ? "Cities from" : `Cities to ${index}`,
                   onChange: (value) => handleCityChange(value, index, "originLocation"),
                   styles: {
@@ -152,7 +154,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
       >
         <Button variant="outline-primary" className="w-100">
           {cityPlan.transport !== null ? (
-            <>
+            <> 
               Transport: {transportOptions.find((option) => option.value === cityPlan.transport)?.icon}{" "}
               {Transport[cityPlan.transport]}
             </>

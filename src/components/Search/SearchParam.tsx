@@ -27,10 +27,11 @@ const SearchParam: React.FC<SearchParamProps> = ({trips,setTrips}) => {
   const [returnDate, setReturnDate] = useState<string | null>(null);
   const [filteredTrips, setFilteredTrips] = useState<TripPlan[]>(trips);
   const [showDates, setShowDates] = useState<boolean>(false);
+  const [id, setId] = useState<string>();
 
   useEffect(() => {
     filterTrips();
-  }, [cities, selectedLanguages, selectedTypeOfTreval, selectedBudget, selectedGender, withChildren, participantsFromOtherCountries, departureDate, returnDate,showDates]);
+  }, [cities, selectedLanguages, selectedTypeOfTreval, selectedBudget, selectedGender, withChildren, participantsFromOtherCountries, departureDate, returnDate,showDates,id]);
 
   const handleRemoveCity = (index: number) => {
     const updatedCities = cities.filter((_, i) => i !== index);
@@ -81,8 +82,19 @@ const SearchParam: React.FC<SearchParamProps> = ({trips,setTrips}) => {
     setShowDates(e.target.checked);
   };
 
+  const handleId = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    setId(e.target.value);
+  };
+
   const filterTrips = () => {
     let filtered = saveTrips
+    .filter(trip => {
+      if(id){
+        return trip.id === id;
+      }
+      return true;
+    })
     .filter(trip =>cities.length<=0 ? true : (
       trip.cityPlans.some(cityPlan => cities.includes(cityPlan.originLocation))
     ))
@@ -124,6 +136,14 @@ const SearchParam: React.FC<SearchParamProps> = ({trips,setTrips}) => {
 
   return (
     <div>
+      <Form.Group controlId="formDateOfDeparture" className="mb-3" style={{marginTop: "20px"}}>
+          <Form.Label>Start Date</Form.Label>
+          <Form.Control
+            type="input"
+            value={id}
+            onChange={handleId}
+          />
+        </Form.Group>
       {/* Города */}
       <div className="my-3">
         <Form.Label>Selected Cities</Form.Label>

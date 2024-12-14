@@ -14,7 +14,7 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
   const location = useLocation();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
       context[DataEnum.User].set(JSON.parse(storedUser));
     }
@@ -22,7 +22,7 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
 
   useEffect(() => {
     if (!context[DataEnum.AuthModalShow].value) {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       if (storedUser) {
         context[DataEnum.User].set(JSON.parse(storedUser));
       }
@@ -34,7 +34,7 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     context[DataEnum.User].set(undefined);
     navigate("/");
   };

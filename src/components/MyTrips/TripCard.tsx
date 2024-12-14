@@ -11,12 +11,13 @@ import { TripPlan } from "../../interfaces/TripPlan";
 import { dataContext, DataEnum } from "../../App";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { ImageCarousel } from "./ImageCarousel";
-import { FaClipboard, FaComments, FaArrowLeft, FaSignOutAlt, FaEdit, FaUsers } from "react-icons/fa";
+import { FaClipboard, FaComments, FaArrowLeft, FaSignOutAlt, FaEdit, FaUsers, FaUser } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { AsyncAction } from "../../utils";
 import { AxiosError } from "axios";
 import { TripPlanApi } from "../../services/TripPlanApi";
 import { UserApi } from "../../services/UserApi";
+import { Loadding } from "../custom/Loadding";
 
 export const TripCard: React.FC = () => {
   const [tripView, setTripView] = useState<{
@@ -30,6 +31,25 @@ export const TripCard: React.FC = () => {
   const { trip_plan_id } = useParams<{ trip_plan_id: string }>();
   const navigate = useNavigate();
   const [room, setRoom] = useState<string>("general");
+  const [users, setUsers] = useState<IGoogleUser[]>([]);
+  const [loadding, setLoading] = useState<boolean>(false);
+
+
+
+  useEffect(()=>{
+
+      (async ()=>{
+        setLoading(true);
+    
+        console.log(trip_plan_id);
+        const paritcipants = await TripPlanApi.paritcipants(trip_plan_id as string);
+        setUsers(paritcipants);
+        console.log(paritcipants);
+        
+        setLoading(false);
+      })()
+    
+  },[]);
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return "N/A";
@@ -43,18 +63,22 @@ export const TripCard: React.FC = () => {
 
   useEffect(() => {
     setTripView(() => context[DataEnum.TripView].value);
-    console.log(tripView);
-  }, [context]);
+  }, []);
 
   const handleBack = () => {
     navigate("/my-trips");
   };
 
   const handleCopiClick = () => {
-    console.log("Copi button clicked");
+    navigator.clipboard.writeText(tripView?.trip.id || "No title available").then(() => {
+      toast.success("Trip title copied to clipboard!");
+      toast.info("Trip ID: " + tripView?.trip.id);
+    }).catch((err) => {
+      toast.error("Failed to copy text: " + err);
+    });
   };
 
-  const handleChatClick = () => {
+  const handleChatClick = () => { 
     console.log("Chat button clicked");
   };
  
@@ -72,14 +96,14 @@ export const TripCard: React.FC = () => {
   };
 
   async function hadleShowChat(chatName: string) {
-    navigate(`/chat/${chatName}`);
+    navigate(`/chat/${chatName}/${tripView?.trip.id}`);
   }
 
   const truncateText = (text: string, maxLength: number): string => {
     return text.length > maxLength ? '...' + text.slice(text.length - maxLength, text.length) : text;
   };
 
-  return (
+  return loadding ? <Loadding/> : (
     <Card className="mb-4 shadow-sm border-0 rounded-4">
       <Card.Header className="p-3 d-flex justify-content-between align-items-left">
         <Button variant="outline-secondary" className="rounded-4 px-4" onClick={handleBack}>
@@ -94,6 +118,7 @@ export const TripCard: React.FC = () => {
               alt={`${tripView?.trip.title || "Trip"} thumbnail`}
               className="img-fluid rounded-4 shadow-sm city-image"
             />
+            
           </div>
 
           <div
@@ -142,9 +167,21 @@ export const TripCard: React.FC = () => {
           </div>
 
           <div>
-            <Badge bg="info" className="text-uppercase">
-              <FaUsers size={18} className="me-2" />Participants: {tripView?.trip.participants.length}/{tripView?.trip.groupType}
-            </Badge><br/>
+            <Badge bg="info" className="text-uppercase" style={{display:"flex", flexDirection:"column", marginTop:`${20}px`}}>
+              <h6><FaUsers size={18} className="me-2" />Participants: {tripView?.trip.participants.length}/{tripView?.trip.groupType}</h6>              
+              {users.map((user, index) =>{
+
+                return <>
+                <br /><br/><Badge bg="danger" className="text-uppercase" style={{width:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <FaUser size={18} className="me-2" /> {user.name}   
+                </Badge> 
+                </>
+              })}
+
+            </Badge>
+            
+            
+            
           </div>
         </Col>
 

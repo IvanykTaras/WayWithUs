@@ -93,7 +93,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
             <Form.Label>First day</Form.Label>
             <Form.Control
               type="date"
-              value={cityPlan.data.startDate}
+              value={cityPlan.data.startDate.split("T")[0]}
               onChange={(e) =>
                 cityPlan.set({
                   ...cityPlan.data,
@@ -108,7 +108,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
             <Form.Label>Last day</Form.Label>
             <Form.Control
               type="date"
-              value={cityPlan.data.endDate}
+              value={cityPlan.data.endDate.split("T")[0]}
               onChange={(e) =>
                 cityPlan.set({
                   ...cityPlan.data,
@@ -137,6 +137,12 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
       </Row>
 
       {/* Тип размещения */}
+       {/* Места для посещения */}
+       <Row className="mb-3">
+        <Col>
+          <h6>Type of accomodation</h6>
+        </Col>
+      </Row>
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group controlId="AccommodationName">
@@ -157,6 +163,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
             <GooglePlacesAutocomplete
               apiKey={PLACES_API_KEY}
               selectProps={{
+                value: { label: cityPlan.data.accommodations[0]?.location_acc || "", value: cityPlan.data.accommodations[0]?.location_acc || "" },
                 placeholder: "Find a location",
                 onChange: handleChooseLocation,
                 styles: {
@@ -197,6 +204,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
               <GooglePlacesAutocomplete
                 apiKey={PLACES_API_KEY}
                 selectProps={{
+                  value: { label: place.location || "", value: place.location || "" },
                   placeholder: "Find a location",
                   onChange: (value) => handleChoosePlace(value, placeIndex),
                   styles: {

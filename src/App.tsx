@@ -114,7 +114,7 @@ function App() {
 
 
   useEffect(()=>{
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     if (!storedUser) {
        setAuthModalShow(true);
     }   
@@ -123,7 +123,7 @@ function App() {
 
   
   useEffect(() => {
-    if(downloadTrips && !tripView){
+    if(downloadTrips){
       (async () => {   
         await AsyncAction(setLoadding, async () => {
           try {
@@ -165,7 +165,7 @@ function App() {
       password: "test"
     })
 
-    localStorage.setItem("token", JSON.stringify(data.accessToken));
+    sessionStorage.setItem("token", JSON.stringify(data.accessToken));
     console.dir(data);
   }
 
