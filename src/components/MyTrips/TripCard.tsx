@@ -84,7 +84,27 @@ export const TripCard: React.FC = () => {
  
   
   async function removeParticipant(tripId: string) {
-    console.log("Leave button clicked");
+    AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise(
+          async () => {
+            await TripPlanApi.removeParticipant(tripId, context[DataEnum.User].value.id as string);
+            navigate("/my-trips");
+          },
+          {
+            pending: 'removing participant pending',
+            success: 'Participant removed 👌',
+            error: 'Promise rejected 🤯'
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error);
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
+
   }
 
   const handleUpdateClick = () => {
@@ -159,7 +179,7 @@ export const TripCard: React.FC = () => {
             <Button
               variant="outline-danger"
               className="rounded-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={() => removeParticipant(tripView?.trip.id as string)}
+              onClick={() => removeParticipant(tripView?.trip.id  as string)}
             >
               <FaSignOutAlt size={18} />
               Leave

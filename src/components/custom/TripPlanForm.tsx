@@ -16,33 +16,53 @@ const TripPlanForm = () => {
   const [activeTab, setActiveTab] = useState<string>("general");
   const data = useContext(dataContext);
 
+  const validateTripPlan = (): string[] => {
+    const requiredFields: string[] = [];
+    const { userId, title, description, startDate, endDate, cityPlans, languages, age, genderParticipants, withChildren, budget, groupType, typeTravel, participantsFromOtherCountries, participants, openForBussines } = dataTripPlan;
 
-  
+    if (!title) requiredFields.push("title");
+    if (!description) requiredFields.push("description");
+    if (!languages.length) requiredFields.push("languages");
+    if (!age.min) requiredFields.push("age.min");
+    if (!age.max) requiredFields.push("age.max");
+    if (genderParticipants === undefined) requiredFields.push("genderParticipants");
+    if (withChildren === undefined) requiredFields.push("withChildren");
+    if (!budget) requiredFields.push("budget");
+    if (!groupType) requiredFields.push("groupType");
+    if (!typeTravel) requiredFields.push("typeTravel");
+    if (participantsFromOtherCountries === undefined) requiredFields.push("participantsFromOtherCountries");
+    if (openForBussines === undefined) requiredFields.push("openForBussines");
+
+    return requiredFields;
+  };
 
   const generateTripPlan = async () => {
-    await AsyncAction(data[DataEnum.Loadding].set, async ()=>{
-      
-      try{
+    const missingFields = validateTripPlan();
+    if (missingFields.length) {
+      toast.error(`Missing required fields: ${missingFields.join(", ")}`);
+      return;
+    }
+
+    await AsyncAction(data[DataEnum.Loadding].set, async () => {
+      try {
         await toast.promise(
-          async ()=>{
-            dataTripPlan.userId = data[DataEnum.User].value ? data[DataEnum.User].value.id : "674f90d7342de20f2d0cc194"; ;
+          async () => {
+            dataTripPlan.userId = data[DataEnum.User].value ? data[DataEnum.User].value.id : "674f90d7342de20f2d0cc194";
             await TripPlanApi.create(dataTripPlan);
           },
           {
-          pending: 'creating trip pending',
-          success: 'Trip created 👌',
-          error: 'Promise rejected 🤯'
+            pending: 'creating trip pending',
+            success: 'Trip created 👌',
+            error: 'Promise rejected 🤯'
           }
         );
-      }catch(error){
+      } catch (error) {
         const e = error as AxiosError;
-        console.error(error)
+        console.error(error);
         toast.error(e.code);
         toast.error(e.message);
       }
-
     });
-
   };
 
   const handlePrev = () => {

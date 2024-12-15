@@ -7,11 +7,20 @@ import { LogoSVG } from "../../assets/LogoSVG";
 import { testTripPlan, TripPlanApi } from "../../services/TripPlanApi";
 import { IoNotificationsCircle } from "react-icons/io5";
 import { Notification } from "../AuthModal";
+import { FaRobot } from "react-icons/fa";
+import { AsyncAction } from "../../utils";
+import { toast } from "react-toastify";
+import { TripPlan } from "../../interfaces/TripPlan";
+import { AxiosError } from "axios";
+import { error } from "console";
+import { IGoogleUser } from "../../interfaces/IGoogleUser";
+import { UserApi } from "../../services/UserApi";
 
 export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
   const context = useContext(dataContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isTripGenerated, setIsTripGenerated] = useState(false);
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
@@ -48,6 +57,67 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
     updatedNotifications.splice(index, 1);
     context[DataEnum.Notifies].set(updatedNotifications);
   };
+
+
+
+  const handleAiGenerateTrip = async () => {
+    
+    
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( async () => {
+            setIsTripGenerated(true)
+            const generatedTrip: TripPlan = await TripPlanApi.aiGenerateTripPlan(context[DataEnum.User].value.id);
+            await TripCard(generatedTrip.id as string);
+            setIsTripGenerated(false);
+        }, {
+          pending: 'Generating trip pending',
+          success: 'Trip generated 👌',
+          error: 'Promise rejected 🤯'
+        });
+
+      } catch (e) {
+        const error: AxiosError = e as AxiosError; 
+        console.error(error);
+        toast.error(error.message);
+        toast.error(error.code);
+      }
+    });
+
+  };
+
+
+  async function TripCard(id: string) {
+      await downloadTripAndUser(id);
+      navigate(`/my-trips/${id}`);
+  }
+
+  async function downloadTripAndUser(tripId: string) {
+      await AsyncAction(context[DataEnum.Loadding].set, async () => {
+          try {
+          await toast.promise(
+              async () => {
+              const trip: TripPlan = await TripPlanApi.getById(tripId);
+              const user: IGoogleUser = await UserApi.getUserById(trip.userId);
+              context[DataEnum.TripView].set({
+                  trip: trip,
+                  user: user
+              })
+              },
+              {
+              pending: 'load trip',
+              success: 'trip downloaded 👌',
+              error: 'some error 🤯'
+              }
+          );
+          } catch (error) {
+          const e = error as AxiosError;
+          console.error(error)
+          toast.error(e.code);
+          toast.error(e.message);
+          }
+      });
+  }
 
   return (
     <>
@@ -119,7 +189,15 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
                   >
                     Business
                   </Nav.Link>
-                  
+                  <Button
+                    variant="outline-info"
+                    className="rounded-4 px-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
+                    onClick={()=>handleAiGenerateTrip()}
+                    disabled={isTripGenerated}
+                    >
+                    <FaRobot size={18} />
+                    Generate Trip By AI
+                  </Button>
                 </>
               )}
             </Nav>

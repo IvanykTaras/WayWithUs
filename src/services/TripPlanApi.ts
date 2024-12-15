@@ -72,7 +72,7 @@ export class TripPlanApi {
   }
 
   static async paritcipants(tripId: string):Promise<IGoogleUser[]>{
-    return (await axios.get(this.url + `/${tripId}/participants`,{
+    return (await axios.post(this.url + `/${tripId}/participants`,{},{
       headers: {
         "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
         "Type-Content": "application/json"
@@ -98,6 +98,16 @@ export class TripPlanApi {
         "Type-Content": "application/json"
       },
     });
+  }
+
+  static async aiGenerateTripPlan(userId:string): Promise<TripPlan> {
+    return (await axios.post(this.url + `/aiGenerateTripPlan/${userId}`,{},
+    {
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      }
+    })).data;
   }
 }
 
