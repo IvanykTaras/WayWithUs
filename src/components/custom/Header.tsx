@@ -15,6 +15,7 @@ import { AxiosError } from "axios";
 import { error } from "console";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { UserApi } from "../../services/UserApi";
+import { NotifyApi } from "../../services/NotifyApi";
 
 export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
   const context = useContext(dataContext);
@@ -119,6 +120,16 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
       });
   }
 
+  async function tryNotify(){
+    const notify = new NotifyApi();
+    const n: Notification = { 
+      user: "user",
+      title: "title",
+      notification: "notification"
+    }
+    await notify.notificationSubscribe(n);
+  }
+
   return (
     <>
       <Navbar
@@ -198,6 +209,7 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
                     <FaRobot size={18} />
                     Generate Trip By AI
                   </Button>
+                  <Button onClick={tryNotify}>Click me</Button>
                 </>
               )}
             </Nav>

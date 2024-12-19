@@ -25,7 +25,6 @@ interface IProps{
 export const Chat: React.FC<IProps> = ({users,messages,sendMessage,closeConnection}) => {
     
 
-
     return <>
     <div className="leave-room">
         <Button className="w-100" variant="danger" onClick={()=>closeConnection()}>Leave room</Button>
