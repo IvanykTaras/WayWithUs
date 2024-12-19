@@ -54,7 +54,7 @@ const router = createBrowserRouter([
         element: <TripCard />,
       },
       {
-        path: "/edit-trip/:trip_plan_id", // Новый маршрут
+        path: "/edit-trip/:trip_plan_id",
         element: <EditTrip />,
       },
       {

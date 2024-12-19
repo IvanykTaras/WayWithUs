@@ -78,10 +78,40 @@ export const TripCard: React.FC = () => {
     });
   };
 
-  const handleChatClick = () => { 
-    console.log("Chat button clicked");
-  };
+  const loggedInUserId = context[DataEnum.User].value.id;
  
+  async function deleteTrip(tripId: string) {
+    if (!tripId) {
+      toast.error("Trip ID is required to delete a trip.");
+      return;
+    }
+
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise(
+          async () => {
+            // Удаление поездки через API
+            await TripPlanApi.deleteTrip(tripId);
+          },
+          {
+            pending: "Deleting trip...",
+            success: "Trip deleted successfully 👌",
+            error: "Failed to delete trip 🤯",
+          }
+        );
+
+        // Навигация после успешного удаления
+        toast.info("Redirecting to My Trips...");
+        navigate("/my-trips");
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error("Error during trip deletion:", e);
+        toast.error(e.message || "An unexpected error occurred while deleting the trip.");
+      }
+    });
+  }
+
+
   
   async function removeParticipant(tripId: string) {
     AsyncAction(context[DataEnum.Loadding].set, async () => {
@@ -104,8 +134,37 @@ export const TripCard: React.FC = () => {
         toast.error(e.message);
       }
     });
-
   }
+
+  const handleRemoveUser = async (tripId: string, userId: string) => {
+    if (!tripView?.trip.id) {
+      toast.error("Trip ID is missing. Unable to remove participant.");
+      return;
+    }
+
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise(
+          async () => {
+            await TripPlanApi.removeParticipant(tripView?.trip.id!, userId); 
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId)); 
+            toast.success(`Participant with ID ${userId} removed successfully!`);
+          },
+          {
+            pending: "Removing participant...",
+            success: "Participant removed successfully 👌",
+            error: "Failed to remove participant 🤯",
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(error);
+        toast.error(e.code || "Error removing participant.");
+      }
+    });
+  };
+
+  
 
   const handleUpdateClick = () => {
     if (tripView?.trip.id) {
@@ -124,7 +183,7 @@ export const TripCard: React.FC = () => {
   };
 
   return loadding ? <Loadding/> : (
-    <Card className="mb-4 shadow-sm border-0 rounded-4">
+    <Card className="mb-4 shadow border-0 rounded-4">
       <Card.Header className="p-3 d-flex justify-content-between align-items-left">
         <Button variant="outline-secondary" className="rounded-4 px-4" onClick={handleBack}>
           <FaArrowLeft className="me-2" /> Back
@@ -170,7 +229,13 @@ export const TripCard: React.FC = () => {
             <Button
               variant="outline-warning"
               className="rounded-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={handleUpdateClick}
+              onClick={() => {
+                if (loggedInUserId === tripView?.trip.userId) {
+                  handleUpdateClick(); 
+                } else {
+                  toast.warning("Only the trip creator can make changes"); 
+                }
+              }}
             >
               <FaEdit size={18} />
               Update
@@ -179,32 +244,106 @@ export const TripCard: React.FC = () => {
             <Button
               variant="outline-danger"
               className="rounded-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={() => removeParticipant(tripView?.trip.id  as string)}
+              onClick={() => {
+                if (loggedInUserId === tripView?.trip.userId) {
+                  deleteTrip(tripView?.trip.id as string); 
+                } else {
+                  removeParticipant(tripView?.trip.id as string);
+                }
+              }}
             >
-              <FaSignOutAlt size={18} />
-              Leave
-            </Button>
-          </div>
-
-          <div>
-            <Badge bg="info" className="text-uppercase" style={{display:"flex", flexDirection:"column", marginTop:`${20}px`}}>
-              <h6><FaUsers size={18} className="me-2" />Participants: {tripView?.trip.participants.length}/{tripView?.trip.groupType}</h6>              
-              {users.map((user, index) =>{
-
-                return <>
-                <br /><br/><Badge bg="danger" className="text-uppercase" style={{width:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
-                <FaUser size={18} className="me-2" /> {user.name}   
-                </Badge> 
+              {loggedInUserId === tripView?.trip.userId ? (
+                <>
+                  <FaSignOutAlt size={18} />
+                  Delete the trip
                 </>
-              })}
+              ) : (
+                <>
+                  <FaSignOutAlt size={18} />
+                  Leave
+                </>
+              )}
+            </Button>
 
-            </Badge>
-            
-            
-            
           </div>
-        </Col>
+          <div style={{ marginTop: "10px" }}>
+            <Badge
+              bg="info"
+              className="text-uppercase p-3"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                borderRadius: "8px",
+                marginBottom: "10px",
+              }}
+            >
+              <h6
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                }}
+              >
+                <FaUsers size={18} className="me-2" />
+                Participants: {tripView?.trip.participants.length}/{tripView?.trip.groupType}
+              </h6>
+              <div style={{ width: "100%" }}>
+                {users.map((user, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "#f8f9fa",
+                      border: "1px solid #dee2e6",
+                      borderRadius: "6px",
+                      padding: "10px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#495057",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      <FaUser size={18} className="me-2" />
+                      {user.name}
+                    </span>
+                    {loggedInUserId === tripView?.trip.userId && user.id !== tripView?.trip.userId && ( // Условие
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        style={{
+                          border: "none",
+                          padding: "2px 6px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                        onClick={() => {
+                          if (tripView?.trip.id) {
+                            handleRemoveUser(tripView.trip.id, user?.id!);
+                          } else {
+                            toast.error("Trip ID is missing. Unable to remove participant.");
+                          }
+                        }}
+                      >
+                        ✕
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Badge>
+          </div>
 
+        </Col>
 
         <Col md={8}>
           <Card.Body className="p-4">
@@ -279,7 +418,7 @@ export const TripCard: React.FC = () => {
               <Col md={12}>
                 {tripView?.trip.cityPlans.map((cityPlan, index) => (
                   <React.Fragment key={index}>
-                    <Card className="mb-4 shadow-sm border-0 rounded-4">
+                    <Card className="mb-4 shadow border-0 rounded-4">
                       <Row className="g-0 align-items-center">
                         <Col md={4}>
                           <div className="d-flex align-items-start justify-content-center p-3">
@@ -382,7 +521,7 @@ export const TripCard: React.FC = () => {
                     {index < tripView.trip.cityPlans.length - 1 && (
                       <>
                         <div
-                          className="text-center my-3 text-muted"
+                          className="text-center shadow my-3 text-muted"
                           style={{
                             backgroundColor: "#f8f9fa",
                             padding: "10px",

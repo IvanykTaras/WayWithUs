@@ -12,6 +12,7 @@ import { AsyncAction } from "../../utils";
 import { toast } from "react-toastify";
 import { TripPlanApi } from "../../services/TripPlanApi";
 import { AxiosError } from "axios";
+import { FaArrowLeft } from "react-icons/fa";
 
 export const TripDetails: React.FC = () => {
   const [tripView, setTripView] = useState<{ trip: TripPlan; user: IGoogleUser }>();
@@ -185,9 +186,9 @@ export const TripDetails: React.FC = () => {
         </Col>
       </Row>
       <Card.Footer className="d-flex justify-content-between align-items-center p-3">
-        <ButtonGroup>
+        <ButtonGroup>         
           <Button variant="outline-secondary" className="rounded-4 px-4" onClick={handleBack}>
-            Back
+            <FaArrowLeft className="me-2" /> Back
           </Button>
         </ButtonGroup>
       </Card.Footer>

@@ -22,6 +22,11 @@ const SearchForm: React.FC = () => {
     setTrips(context[DataEnum.Trips].value);
   }, []); 
 
+  const filteredTrips = trips.filter(
+  (trip) => trip.participants.length < trip.groupType
+);
+
+
   return (
     <Container fluid>
       <Row>
@@ -35,7 +40,7 @@ const SearchForm: React.FC = () => {
           </div>
         </Sidebar>
         <Col className="p-3">
-          <h2 className="mb-4">All trips {trips.length}</h2>
+          <h2 className="mb-4">All trips {filteredTrips.length}</h2>
           <TripList trips={trips} users={users}/>
         </Col>
       </Row>

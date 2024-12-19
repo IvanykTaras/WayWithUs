@@ -100,6 +100,16 @@ export class TripPlanApi {
     });
   }
 
+  static async deleteTrip(tripId: string): Promise<void> {
+    await axios.delete(`${this.url}/${tripId}`, {
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json",
+      },
+    });
+  }
+
+
   static async aiGenerateTripPlan(userId:string): Promise<TripPlan> {
     return (await axios.post(this.url + `/aiGenerateTripPlan/${userId}`,{},
     {

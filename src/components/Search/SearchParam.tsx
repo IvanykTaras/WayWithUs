@@ -137,7 +137,7 @@ const SearchParam: React.FC<SearchParamProps> = ({trips,setTrips}) => {
   return (
     <div>
       <Form.Group controlId="formDateOfDeparture" className="mb-3" style={{marginTop: "20px"}}>
-          <Form.Label>Start Date</Form.Label>
+        <Form.Label>Find the trip by id</Form.Label>
           <Form.Control
             type="input"
             value={id}
