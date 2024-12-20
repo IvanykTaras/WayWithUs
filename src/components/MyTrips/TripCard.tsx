@@ -18,6 +18,7 @@ import { AxiosError } from "axios";
 import { TripPlanApi } from "../../services/TripPlanApi";
 import { UserApi } from "../../services/UserApi";
 import { Loadding } from "../custom/Loadding";
+import Markdown from "react-markdown";
 
 export const TripCard: React.FC = () => {
   const [tripView, setTripView] = useState<{
@@ -422,7 +423,7 @@ export const TripCard: React.FC = () => {
               <br />
               <br />
               <strong>About trip:</strong>
-              <p className="text-secondary">{tripView?.trip.description}</p>
+              <Markdown>{tripView?.trip.description}</Markdown>
             </Card.Text>
 
 
@@ -499,7 +500,8 @@ export const TripCard: React.FC = () => {
                               </p>
                               <br />
                               <strong>About {cityPlan.originLocation.split(",")[0]}:</strong>{" "}
-                              {cityPlan.description || "No description available"}
+                              <Markdown>{cityPlan.description || "No description available"}</Markdown>
+                              
                               <br />
                               <strong>Accommodation: </strong>
                               <div style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
@@ -557,7 +559,7 @@ export const TripCard: React.FC = () => {
                                     >
                                       {place.location.split(",")[0]}:
                                     </a>{" "}
-                                    {place.details || "No details available"}
+                                    <Markdown>{place.details || "No details available"}</Markdown>
                                   </li>
                                 ))}
                               </ul>

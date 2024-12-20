@@ -80,6 +80,43 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
     });
   };
 
+
+
+  const handleAiGenerateTripAndEdit = async () => {
+    
+    
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( async () => {
+            setIsTripGenerated(true)
+            const generatedTrip: TripPlan = await TripPlanApi.aiGenerateTripPlanDontSave(context[DataEnum.User].value.id);
+            await handleUpdateClick(generatedTrip.id as string);
+            setIsTripGenerated(false);
+        }, {
+          pending: 'Generating trip pending',
+          success: 'Trip generated 👌',
+          error: 'Promise rejected 🤯'
+        });
+
+      } catch (e) {
+        const error: AxiosError = e as AxiosError; 
+        console.error(error);
+        toast.error(error.message);
+        toast.error(error.code);
+      }
+    });
+
+  };
+
+  async function handleUpdateClick (tripId:string) {
+      if (tripId) {
+        navigate(`/edit-trip/${tripId}`); 
+      } else {
+        toast.error("Trip ID not found. Unable to update.");
+      }
+  };
+
+
   async function TripCard(id: string) {
     await downloadTripAndUser(id);
     navigate(`/my-trips/${id}`);
@@ -261,15 +298,29 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                           e.currentTarget.src = "https://th.bing.com/th/id/R.74760693646c701efeded01334dee357?rik=pJk9zY2UtYFYcA&pid=ImgRaw&r=0";
                         }}
                       />
-                      <Text style={{ color: "white" }}>{context[DataEnum.User].value.name}</Text>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => navigate("/settings")}>Settings</Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </>
-              )}
+                      <Box>
+                        <Text as="div" size="2" weight="bold" style={{ color: "#FFFFFF" }}>
+                          {context[DataEnum.User].value.name}
+                        </Text>
+                        <Text as="div" size="2" style={{ color: "#E8F5E9" }}>
+                          {context[DataEnum.User].value.email}
+                        </Text>
+                      </Box>
+                    </Flex>
+                  </Box>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {/* <Dropdown.Item>
+                    <Link to={"/create-trip"}>Profile</Link>
+                  </Dropdown.Item> */}
+                  <Dropdown.Item onClick={()=>handleAiGenerateTripAndEdit()}>Create Trip with AI and Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>handleAiGenerateTrip()}>Create Trip with AI and show Details</Dropdown.Item>
+                  <Dropdown.Item>Settings</Dropdown.Item>
+                  <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+              </>)}
+
             </Nav>
           </Navbar.Collapse>
         </Container>

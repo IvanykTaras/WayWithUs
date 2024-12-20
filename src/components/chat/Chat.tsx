@@ -27,7 +27,7 @@ export const Chat: React.FC<IProps> = ({users,messages,sendMessage,closeConnecti
 
     return <>
     <div className="leave-room">
-        <Button className="w-100" variant="danger" onClick={()=>closeConnection()}>Leave room</Button>
+        <Button className="w-100" variant="danger" onClick={async ()=>await closeConnection()}>Leave room</Button>
     </div>
     <ConnectedUsers users={users}/>
     <div className="chat">
