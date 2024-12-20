@@ -133,3 +133,11 @@ hr.line {
     margin-right: 5px;
 }
 
+.md{
+
+    border-radius: 10px;
+    background: lightgray;
+    padding: 1rem;
+    margin-top: 1rem;
+
+}

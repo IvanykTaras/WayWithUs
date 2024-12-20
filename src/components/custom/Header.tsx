@@ -88,6 +88,40 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
   };
 
 
+  const handleAiGenerateTripAndEdit = async () => {
+    
+    
+    await AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise( async () => {
+            setIsTripGenerated(true)
+            const generatedTrip: TripPlan = await TripPlanApi.aiGenerateTripPlanDontSave(context[DataEnum.User].value.id);
+            await handleUpdateClick(generatedTrip.id as string);
+            setIsTripGenerated(false);
+        }, {
+          pending: 'Generating trip pending',
+          success: 'Trip generated 👌',
+          error: 'Promise rejected 🤯'
+        });
+
+      } catch (e) {
+        const error: AxiosError = e as AxiosError; 
+        console.error(error);
+        toast.error(error.message);
+        toast.error(error.code);
+      }
+    });
+
+  };
+
+  async function handleUpdateClick (tripId:string) {
+      if (tripId) {
+        navigate(`/edit-trip/${tripId}`); 
+      } else {
+        toast.error("Trip ID not found. Unable to update.");
+      }
+  };
+
   async function TripCard(id: string) {
       await downloadTripAndUser(id);
       navigate(`/my-trips/${id}`);
@@ -293,6 +327,8 @@ export const Header: React.FC<{notify:Notification[]}> = ({notify}) => {
                   {/* <Dropdown.Item>
                     <Link to={"/create-trip"}>Profile</Link>
                   </Dropdown.Item> */}
+                  <Dropdown.Item onClick={()=>handleAiGenerateTripAndEdit()}>Create Trip with AI and Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>handleAiGenerateTrip()}>Create Trip with AI and show Details</Dropdown.Item>
                   <Dropdown.Item>Settings</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                 </Dropdown.Menu>

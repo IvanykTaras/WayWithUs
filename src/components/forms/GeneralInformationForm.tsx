@@ -5,6 +5,8 @@ import { TripPlan } from '../../interfaces/TripPlan';
 import { GenderParticipantsValueList } from '../../enums/GenderParticipants';
 import { languageOptions, OptionType } from './languages';
 import { travelTypesOptions, TravelTypeOption } from './travelTypes';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface IGeneralInformationForm {
   dataTripPlan: {
@@ -59,6 +61,7 @@ const GeneralInformationForm: React.FC<IGeneralInformationForm> = ({ dataTripPla
             value={dataTripPlan.data.description}
             onChange={(e) => dataTripPlan.set({ ...dataTripPlan.data, description: e.target.value })}
           />
+          <Markdown className="md"  remarkPlugins={[remarkGfm]}>{dataTripPlan.data.description}</Markdown>
         </Form.Group>
 
         <Row className="mb-3 ">

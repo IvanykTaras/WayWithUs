@@ -6,6 +6,8 @@ import { FaCalendarAlt, FaSearch, FaEdit, FaTimes } from "react-icons/fa";
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
 import { accommodationOptions, AccommodationOption } from "./AccommodationOption";
 import { CityPlan, Place, Accommodation } from "../../interfaces/TripPlan";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
         
 
 interface CityDetailsFormProps {
@@ -132,6 +134,10 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
               })
             }}
           />
+          
+          
+          <Markdown className="md" remarkPlugins={[remarkGfm]}>{cityPlan.data.description}</Markdown>
+          
         </Form.Group>
         </Col>
       </Row>
