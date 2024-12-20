@@ -119,6 +119,16 @@ export class TripPlanApi {
       }
     })).data;
   }
+
+  static async aiGenerateTripPlanDontSave(userId:string): Promise<TripPlan> {
+    return (await axios.post(this.url + `/aiGenerateTripPlanDontSave/${userId}`,{},
+    {
+      headers: {
+        "Authorization": `Bearer ${JSON.parse(sessionStorage.getItem("token") as string)}`,
+        "Type-Content": "application/json"
+      }
+    })).data;
+  }
 }
 
 
