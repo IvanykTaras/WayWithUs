@@ -13,6 +13,7 @@ import { dataContext, DataEnum } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { UserApi } from "../../services/UserApi";
 import '../../index.css';
+import { FaArrowRight } from "react-icons/fa";
 
 interface MyTripListProps {
   trips: TripPlan[];
@@ -133,15 +134,22 @@ const MyTripList: React.FC<MyTripListProps> = ({ trips, users }) => {
                   }}
                 >
                   <strong>
-                    {trip.cityPlans
-                      .map((cityPlan) => {
-                        const location = cityPlan.originLocation;
-                        return `${location.includes(",") ? location.split(",")[0] : location
-                          }`;
-                      })
-                      .join(" -> ")}
+                    {trip.cityPlans.map((cityPlan, index) => {
+                      const location = cityPlan.originLocation;
+                      const city = location.includes(",") ? location.split(",")[0] : location;
+
+                      return (
+                        <span key={index}>
+                          {city}
+                          {index < trip.cityPlans.length - 1  && (
+                             <> <FaArrowRight /> </>
+                          )}
+                        </span>
+                      );
+                    })}
                   </strong>
                 </Card.Text>
+
                 <Row>
                   <Col md={6}>
                     <Card.Text>
