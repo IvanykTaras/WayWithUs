@@ -10,3 +10,8 @@ p{
 .makeBigger:hover{
     transform: scale(1.05);
 }
+
+
+.dropdown-toggle::after{
+    display: none;
+}

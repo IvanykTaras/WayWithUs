@@ -306,8 +306,7 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                           {context[DataEnum.User].value.email}
                         </Text>
                       </Box>
-                    </Flex>
-                  </Box>
+                   
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {/* <Dropdown.Item>

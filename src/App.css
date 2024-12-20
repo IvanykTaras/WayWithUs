@@ -141,3 +141,11 @@ hr.line {
     margin-top: 1rem;
 
 }
+
+.md *{
+  max-width: 100%;
+}
+
+.md table *{
+  border: 1px solid black;
+}

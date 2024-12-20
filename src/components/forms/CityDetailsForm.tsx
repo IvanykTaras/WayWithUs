@@ -229,7 +229,7 @@ const CityDetailsForm: React.FC<CityDetailsFormProps> = ({ cityPlan }) => {
               <Form.Control
                 type="text"
                 placeholder="Enter description"
-                value={place.details || ""}
+                value={place.details && ""}
                 onChange={(e) =>
                   handleDescriptionChange(e.target as HTMLInputElement, placeIndex)
                 }

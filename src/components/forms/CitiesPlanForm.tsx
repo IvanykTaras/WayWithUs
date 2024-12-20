@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Form, Popover, OverlayTrigger } from "reac
 import { FaBus, FaCar, FaTrain, FaPlane, FaShip, FaBicycle, FaWalking } from "react-icons/fa";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { PLACES_API_KEY } from "../../assets/ApiKeys";
-import { TripPlan, Transport, CityPlan } from "../../interfaces/TripPlan";
+import { TripPlan, Transport, CityPlan, Accommodation } from "../../interfaces/TripPlan";
 
 interface ICitiesPlanForm {
   dataTripPlan: {
@@ -55,6 +55,14 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
     const updatedCityPlans = [...dataTripPlan.data.cityPlans];
 
     
+    const accomodation: Accommodation = {
+      name: "",
+      location_acc: "",
+      description: "",
+      image_url: "empty",
+      googleMapUrl: "empty"
+    };
+
     const newCityPlan: CityPlan = {
       startDate: "",
       endDate: "",
@@ -62,7 +70,7 @@ const CitiesPlanForm: React.FC<ICitiesPlanForm> = ({ dataTripPlan }) => {
       originLocation: "",
       image_url: "",
       transport: 0,
-      accommodations: [],
+      accommodations: [accomodation],
       places: []
     }
 
