@@ -1,5 +1,17 @@
 export enum BudgetType{
-    Cheap = "cheap",
-    Moderate = "moderate",
-    Luxury = "luxury",
+    Cheap,
+    Moderate,
+    Luxury,
 }
+
+export const BudgetTypeValueList = [
+    "cheap",
+    "moderate",
+    "luxury",
+]
+
+// export enum BudgetType{
+//     Cheap = "cheap",
+//     Moderate = "moderate",
+//     Luxury = "luxury",
+// }

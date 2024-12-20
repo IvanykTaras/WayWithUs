@@ -1,3 +1,17 @@
 p{
     margin: 0;
 }
+
+
+
+.makeBigger{
+    transition: all .25s ease-in-out;
+}
+.makeBigger:hover{
+    transform: scale(1.05);
+}
+
+
+.dropdown-toggle::after{
+    display: none;
+}
