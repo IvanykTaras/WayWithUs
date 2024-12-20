@@ -13,6 +13,7 @@ import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { travelTypesOptions } from "../forms/travelTypes";
 import { useNavigate } from "react-router-dom";
 import { UserApi } from "../../services/UserApi";
+import { FaArrowRight } from "react-icons/fa";
 import ChatApp from "../chat/ChatApp";
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 
@@ -181,7 +182,8 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
               <Card.Body>
                 <Card.Title style={{ fontSize: "1.30rem", fontWeight: "bold" }}>
                   {trip.title}
-                </Card.Title>
+                </Card.Title>               
+
                 <Card.Text
                   className="mb-3"
                   style={{
@@ -192,14 +194,22 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
                   }}
                 >
                   <strong>
-                    {trip.cityPlans
-                      .map((cityPlan) => {
-                        const location = cityPlan.originLocation;
-                        return `${location.includes(",") ? location.split(",")[0] : location}`;
-                      })
-                      .join(" -> ")}
+                    {trip.cityPlans.map((cityPlan, index) => {
+                      const location = cityPlan.originLocation;
+                      const city = location.includes(",") ? location.split(",")[0] : location;
+
+                      return (
+                        <span key={index}>
+                          {city}
+                          {index < trip.cityPlans.length - 1 && (
+                            <> <FaArrowRight /> </>
+                          )}
+                        </span>
+                      );
+                    })}
                   </strong>
                 </Card.Text>
+
                 <Row>
                   <Col md={6}>
                     <Card.Text>
