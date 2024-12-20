@@ -23,6 +23,7 @@ import { TripDetails } from './components/tripDetails/TripDetails';
 import ChatApp from './components/chat/ChatApp';
 import { TripCard } from './components/MyTrips/TripCard';
 import { EditTrip } from './components/MyTrips/EditTrip';
+import HelpPage from './components/custom/HelpPage';
 
 
 
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Hero />,
+      },
+      {
+        path: "/help",
+        element: <HelpPage />,
       },
       {
         path: "/create-trip",

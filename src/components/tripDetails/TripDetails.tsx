@@ -12,7 +12,7 @@ import { AsyncAction } from "../../utils";
 import { toast } from "react-toastify";
 import { TripPlanApi } from "../../services/TripPlanApi";
 import { AxiosError } from "axios";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 export const TripDetails: React.FC = () => {
   const [tripView, setTripView] = useState<{ trip: TripPlan; user: IGoogleUser }>();
@@ -107,17 +107,25 @@ export const TripDetails: React.FC = () => {
               }}
             >
               <strong>Route:</strong>{" "}
-              {tripView?.trip.cityPlans
-                ?.map((cityPlan) => {
-                  const location = cityPlan.originLocation;
-                  return location.includes(",") ? location.split(",")[0] : location;
-                })
-                .join(" -> ")}
+              {tripView?.trip.cityPlans?.map((cityPlan, index) => {
+                const location = cityPlan.originLocation;
+                const city = location.includes(",") ? location.split(",")[0] : location;
+
+                return (
+                  <span key={index}>
+                    {city}
+                    {index < tripView.trip.cityPlans.length - 1 && (
+                      <> <FaArrowRight /> </>
+                    )}
+                  </span>
+                );
+              })}
               <br />
               <br />
               <strong>About trip:</strong>
               <p className="text-secondary">{tripView?.trip.description}</p>
             </Card.Text>
+
             <Row>
               <Col md={6}>
                 <Card.Text>

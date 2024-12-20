@@ -11,7 +11,7 @@ import { TripPlan } from "../../interfaces/TripPlan";
 import { dataContext, DataEnum } from "../../App";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { ImageCarousel } from "./ImageCarousel";
-import { FaClipboard, FaComments, FaArrowLeft, FaSignOutAlt, FaEdit, FaUsers, FaUser } from "react-icons/fa";
+import { FaClipboard, FaComments, FaArrowLeft, FaSignOutAlt, FaEdit, FaUsers, FaUser, FaRoute, FaArrowRight } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { AsyncAction } from "../../utils";
 import { AxiosError } from "axios";
@@ -174,6 +174,27 @@ export const TripCard: React.FC = () => {
     }
   };
 
+  const handleCreateRouteClick = () => {
+    if (!tripView?.trip.cityPlans || tripView.trip.cityPlans.length < 2) {
+      toast.error("Need at least two cities to create a route.");
+      return;
+    }
+
+    const cityLocations = tripView.trip.cityPlans.map((cityPlan) => cityPlan.originLocation);
+    const origin = cityLocations[0]; // Первый город
+    const destination = cityLocations[cityLocations.length - 1]; // Последний город
+    const waypoints = cityLocations.slice(1, -1).join("|"); // Промежуточные города
+
+    // Формирование URL для маршрута в Google Maps
+    const routeUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
+      origin
+    )}&destination=${encodeURIComponent(destination)}&waypoints=${encodeURIComponent(waypoints)}`;
+
+    // Открытие маршрута в новой вкладке
+    window.open(routeUrl, "_blank");
+  };
+
+
   async function hadleShowChat(chatName: string) {
     navigate(`/chat/${chatName}/${tripView?.trip.id}`);
   }
@@ -201,71 +222,91 @@ export const TripCard: React.FC = () => {
           </div>
 
           <div
-            className="d-flex justify-content-center gap-2 mt-3"
+            className="d-flex justify-content-center mt-3"
             style={{
               padding: "0 15px",
               maxWidth: "100%",
-              width: "auto", 
+              width: "auto",
             }}
           >
-            <Button
-              variant="outline-secondary"
-              className="rounded-4 px-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={handleCopiClick}
+            <ButtonGroup
+              className="w-100"
+              style={{
+                gap: "5px", // Добавление отступов между кнопками
+              }}
             >
-              <FaClipboard size={18} />
-              Copy
-            </Button>
-
-            <Button
-              variant="outline-primary"
-              className="rounded-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={() => hadleShowChat(`${truncateText(tripView?.trip?.id as string, 5)}, ${tripView?.trip.title}` as string)}
+              <Button
+                variant="outline-secondary"
+                className="rounded px-4 d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                onClick={handleCopiClick}
               >
-              <FaComments size={18} />
-              Chat
-            </Button>
+                <FaClipboard size={18} />
+                Copy ID
+              </Button>
 
-            <Button
-              variant="outline-warning"
-              className="rounded-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={() => {
-                if (loggedInUserId === tripView?.trip.userId) {
-                  handleUpdateClick(); 
-                } else {
-                  toast.warning("Only the trip creator can make changes"); 
+              <Button
+                variant="outline-info"
+                className="rounded px-4 d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                onClick={handleCreateRouteClick}
+              >
+                <FaRoute size={18} />
+                Route
+              </Button>
+
+              <Button
+                variant="outline-primary"
+                className="rounded d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                onClick={() =>
+                  hadleShowChat(
+                    `${truncateText(tripView?.trip?.id as string, 5)}, ${tripView?.trip.title}` as string
+                  )
                 }
-              }}
-            >
-              <FaEdit size={18} />
-              Update
-            </Button>
+              >
+                <FaComments size={18} />
+                Chat
+              </Button>
 
-            <Button
-              variant="outline-danger"
-              className="rounded-4 d-flex align-items-center justify-content-center gap-2 border-1 flex-grow-1"
-              onClick={() => {
-                if (loggedInUserId === tripView?.trip.userId) {
-                  deleteTrip(tripView?.trip.id as string); 
-                } else {
-                  removeParticipant(tripView?.trip.id as string);
-                }
-              }}
-            >
-              {loggedInUserId === tripView?.trip.userId ? (
-                <>
-                  <FaSignOutAlt size={18} />
-                  Delete the trip
-                </>
-              ) : (
-                <>
-                  <FaSignOutAlt size={18} />
-                  Leave
-                </>
-              )}
-            </Button>
+              <Button
+                variant="outline-warning"
+                className="rounded d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                onClick={() => {
+                  if (loggedInUserId === tripView?.trip.userId) {
+                    handleUpdateClick();
+                  } else {
+                    toast.warning("Only the trip creator can make changes");
+                  }
+                }}
+              >
+                <FaEdit size={18} />
+                Update
+              </Button>
 
+              <Button
+                variant="outline-danger"
+                className="rounded d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                onClick={() => {
+                  if (loggedInUserId === tripView?.trip.userId) {
+                    deleteTrip(tripView?.trip.id as string);
+                  } else {
+                    removeParticipant(tripView?.trip.id as string);
+                  }
+                }}
+              >
+                {loggedInUserId === tripView?.trip.userId ? (
+                  <>
+                    <FaSignOutAlt size={18} />
+                    Delete
+                  </>
+                ) : (
+                  <>
+                    <FaSignOutAlt size={18} />
+                    Leave
+                  </>
+                )}
+              </Button>
+            </ButtonGroup>
           </div>
+
           <div style={{ marginTop: "10px" }}>
             <Badge
               bg="info"
@@ -365,17 +406,25 @@ export const TripCard: React.FC = () => {
               }}
             >
               <strong>Route:</strong>{" "}
-              {tripView?.trip.cityPlans
-                ?.map((cityPlan) => {
-                  const location = cityPlan.originLocation;
-                  return location.includes(",") ? location.split(",")[0] : location;
-                })
-                .join(" -> ")}
+              {tripView?.trip.cityPlans?.map((cityPlan, index) => {
+                const location = cityPlan.originLocation;
+                const city = location.includes(",") ? location.split(",")[0] : location;
+
+                return (
+                  <span key={index}>
+                    {city}
+                    {index < tripView.trip.cityPlans.length - 1 && (
+                      <> <FaArrowRight /> </>
+                    )}
+                  </span>
+                );
+              })}
               <br />
               <br />
               <strong>About trip:</strong>
               <p className="text-secondary">{tripView?.trip.description}</p>
             </Card.Text>
+
 
             {/* Информация о поездке */}
             <Row style={{ 
@@ -419,9 +468,9 @@ export const TripCard: React.FC = () => {
                 {tripView?.trip.cityPlans.map((cityPlan, index) => (
                   <React.Fragment key={index}>
                     <Card className="mb-4 shadow border-0 rounded-4">
-                      <Row className="g-0 align-items-center">
-                        <Col md={4}>
-                          <div className="d-flex align-items-start justify-content-center p-3">
+                      <Row className="g-0">
+                        <Col md={4} className="d-flex flex-column p-3">
+                          <div className="mb-auto">
                             <ImageCarousel
                               images={cityPlan.places.map((place) => place.image_url || "https://via.placeholder.com/150")}
                             />
@@ -517,6 +566,7 @@ export const TripCard: React.FC = () => {
                         </Col>
                       </Row>
                     </Card>
+
 
                     {index < tripView.trip.cityPlans.length - 1 && (
                       <>
