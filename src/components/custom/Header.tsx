@@ -230,11 +230,11 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                   </Nav.Link>
                   <Nav.Link
                     as={Link}
-                    to={"/business"}
+                    to={"/help"}
                     className={`navbar-link ${location.pathname === "/business" ? "active" : ""
                       }`}
                   >
-                    Business
+                    Help
                   </Nav.Link>
                   <Button
                     className="btn-custom mx-3"
