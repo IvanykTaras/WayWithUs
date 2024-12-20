@@ -98,13 +98,15 @@ hr.line {
     float: left;
     background-color: #313131;
     color:white;
-    width: 200px;
-    height: 440px;
+    width: 300px;
+    height: 60vh; 
+    padding: 1rem .25rem;
+    border-radius: 10px;
     margin-right: 4px;
 }
 
 .message-container {
-    height: 400px;    
+    height: 60vh;    
     background-color: white;
     overflow: auto;
     border-radius: 5px;

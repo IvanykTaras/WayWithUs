@@ -15,6 +15,7 @@ import { AxiosError } from "axios";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { UserApi } from "../../services/UserApi";
 import { NotifyApi } from "../../services/NotifyApi";
+import { OpenAIApi } from "../../services/OpenAIApi";
 
 export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
   const context = useContext(dataContext);
@@ -259,21 +260,39 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                 </Button>
               ) : (
                 <>
-                  <Dropdown align="end">
+                  <Dropdown align="end" style={{
+                    marginRight: "20px"
+                  }}>
                     <Dropdown.Toggle
                       as="div"
-                      style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                      style={{ cursor: "pointer", display: "flex", alignItems: "center" }}  
                     >
-                      <IoNotificationsCircle style={{ fontSize: "2rem", color: "white" }} />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <ListGroup>
-                        {notify.map((notification, index) => (
-                          <ListGroup.Item key={index}>
-                            <Badge bg="secondary">{index + 1}</Badge> {notification.notification}
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
+                      <IoNotificationsCircle style={{fontSize:"2rem"}}/>
+                      <div style={{
+                        backgroundColor: "white",
+                        fontWeight: "bold",
+                        color: "#198754",
+                        borderRadius: "100%",
+                        width: "40px",
+                        height: "40px",
+                        textAlign: "center",
+                        alignContent: "center",
+                      }}>{context[DataEnum.Notifies].value.length}</div>
+                    </Dropdown.Toggle> 
+                    <Dropdown.Menu style={{width:"500px", maxHeight:"50vh", overflowY:"scroll"}}>
+                    <ListGroup>
+                      { 
+                        notify.map((notify, index) => {
+                          return (
+                            <ListGroup.Item className="notification" key={index} onClick={() => handleDeleteNotification(index)}> 
+                              <Badge bg="secondary">{index+1}</Badge><Badge>@{notify.user}</Badge><br/>
+                              <Badge bg="info">!{notify.title}</Badge><br /> 
+                              {notify.notification} 
+                            </ListGroup.Item>
+                          );
+                        })
+                      }
+                    </ListGroup>
                     </Dropdown.Menu>
                   </Dropdown>
                   <Dropdown align="end">
@@ -312,7 +331,7 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                   {/* <Dropdown.Item>
                     <Link to={"/create-trip"}>Profile</Link>
                   </Dropdown.Item> */}
-                  <Dropdown.Item onClick={()=>handleAiGenerateTripAndEdit()}>Create Trip with AI and Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>navigate("/create-trip")}>Create Trip with AI and Edit</Dropdown.Item>
                   <Dropdown.Item onClick={()=>handleAiGenerateTrip()}>Create Trip with AI and show Details</Dropdown.Item>
                   <Dropdown.Item>Settings</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>

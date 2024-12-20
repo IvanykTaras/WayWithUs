@@ -12,7 +12,7 @@ import { TripPlanApi } from '../../services/TripPlanApi';
 import { UserApi } from '../../services/UserApi';
 import { MessageApi } from '../../services/MessageApi';
 import { Loadding } from '../custom/Loadding';
-import { Button } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 
 export type message = { user: string, message: string };
 
@@ -152,7 +152,7 @@ export const ChatApp: React.FC = () => {
 
 
   return  !connection ? <>
-    <Button variant="primary" onClick={async()=>{
+    <Button variant="primary" style={{width:"100vw", height:"100vh"}} onClick={async()=>{
       const messages = await MessageApi.getMessagesByTripId(tripId as string);
       setMessages(messages.map(m => ({ user: m.userConnection.user, message: m.messageText })));
 
@@ -165,15 +165,24 @@ export const ChatApp: React.FC = () => {
     <div style={{
       padding: "1rem",
       textAlign: "center",
+      height: "100vh",
     }}>
-      <h2>Chat {room ? formatRoomName(room) : ""}</h2>
-      <hr className="line" />
-      <Chat
-        users={users}
-        messages={messages}
-        sendMessage={sendMessage}
-        closeConnection={closeConnection}
-      />
+      <Card bg='info' text='black'>
+        <Card.Header>
+          <Card.Title>
+            <h2>Chat {room ? formatRoomName(room) : ""}</h2>
+            <hr className="line" />
+          </Card.Title>
+        </Card.Header>
+        <Card.Body>
+          <Chat
+            users={users}
+            messages={messages}
+            sendMessage={sendMessage}
+            closeConnection={closeConnection}
+          />
+        </Card.Body>
+      </Card>
     </div>
   )
 }

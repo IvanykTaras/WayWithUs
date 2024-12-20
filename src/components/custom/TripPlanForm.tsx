@@ -10,10 +10,14 @@ import { toast } from "react-toastify";
 import {  dataContext, DataEnum } from "../../App";
 import { AsyncAction } from "../../utils";
 import { AxiosError } from "axios";
+import { FaRobot } from "react-icons/fa";
+import { Loadding } from "./Loadding";
 
 const TripPlanForm = () => {
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(tripPlanMock);
   const [activeTab, setActiveTab] = useState<string>("general");
+  const [isTripGenerated, setIsTripGenerated] = useState(false);
+  const [loadding, setLoadding] = useState(false);
   const data = useContext(dataContext);
 
   const validateTripPlan = (): string[] => {
@@ -86,9 +90,53 @@ const TripPlanForm = () => {
     return ["general", "trip", ...cityDetailsTabs];
   };
 
-  return (
-    <Container className="py-4" style={{ maxWidth: 800, padding: 0 }}>      
-      <h1 className="text-black fw-bold mb-4">Create your own trip</h1>
+
+  const handleAiGenerateTripAndEdit = async () => {
+    
+    
+      try {
+        await toast.promise( async () => {
+            setLoadding(true)
+            const generatedTrip: TripPlan = await TripPlanApi.aiGenerateTripPlanDontSave(data[DataEnum.User].value.id);
+            console.dir(generatedTrip)
+            setDataTripPlan(()=>generatedTrip);
+            setLoadding(false);
+        }, {
+          pending: 'Generating trip pending',
+          success: 'Trip generated 👌',
+          error: 'Promise rejected 🤯' 
+        }); 
+
+      } catch (e) {
+        const error: AxiosError = e as AxiosError; 
+        console.error(error);
+        toast.error(error.message);
+        toast.error(error.code);
+      }
+    
+  };
+
+  return loadding ? <Loadding/> : (
+    <Container className="py-4" style={{ maxWidth: 800, padding: 0, alignItems: "center" }}>      
+      <h1 className="text-black fw-bold mb-4"
+        style={{
+          
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "100px"
+
+        }}
+      >Create your own trip
+        <Button
+          className="btn-custom mx-3"
+          onClick={handleAiGenerateTripAndEdit}
+          disabled={isTripGenerated}
+        >
+          <FaRobot size={18} /> Fill inputs with AI
+        </Button>
+      </h1>
+
       {/* Tab Navigation */}
       <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k || "general")} id="trip-form-tabs" className="mb-4">
         <Tab eventKey="general" title="General Information">
