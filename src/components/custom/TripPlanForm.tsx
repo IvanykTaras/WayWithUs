@@ -1,17 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Container, Tabs, Tab, Button, Row, Col } from "react-bootstrap";
 import GeneralInformationForm from "../forms/GeneralInformationForm";
 import CitiesPlanForm from "../forms/CitiesPlanForm";
 import CityDetailsForm from "../forms/CityDetailsForm";
 import { TripPlan, CityPlan } from "../../interfaces/TripPlan";
-import { testTripPlan, TripPlanApi, tripPlanMock } from "../../services/TripPlanApi";
+import { TripPlanApi, tripPlanMock } from "../../services/TripPlanApi";
 import textShortener from "../../hooks/useTextShortener";
 import { toast } from "react-toastify";
-import {  dataContext, DataEnum } from "../../App";
+import { dataContext, DataEnum } from "../../App";
 import { AsyncAction } from "../../utils";
 import { AxiosError } from "axios";
 import { FaRobot } from "react-icons/fa";
 import { Loadding } from "./Loadding";
+import { Notification } from "../AuthModal";
+import { NotifyApi } from "../../services/NotifyApi";
 
 const TripPlanForm = () => {
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan>(tripPlanMock);
@@ -22,7 +24,19 @@ const TripPlanForm = () => {
 
   const validateTripPlan = (): string[] => {
     const requiredFields: string[] = [];
-    const { userId, title, description, startDate, endDate, cityPlans, languages, age, genderParticipants, withChildren, budget, groupType, typeTravel, participantsFromOtherCountries, participants, openForBussines } = dataTripPlan;
+    const {
+      title,
+      description,
+      languages,
+      age,
+      genderParticipants,
+      withChildren,
+      budget,
+      groupType,
+      typeTravel,
+      participantsFromOtherCountries,
+      openForBussines,
+    } = dataTripPlan;
 
     if (!title) requiredFields.push("title");
     if (!description) requiredFields.push("description");
@@ -51,20 +65,32 @@ const TripPlanForm = () => {
       try {
         await toast.promise(
           async () => {
-            dataTripPlan.userId = data[DataEnum.User].value ? data[DataEnum.User].value.id : "674f90d7342de20f2d0cc194";
+            dataTripPlan.userId = data[DataEnum.User].value?.id ?? "default-user-id";
             await TripPlanApi.create(dataTripPlan);
+
+            // Отправляем уведомление через SignalR
+            const newNotification: Notification = {
+              user: data[DataEnum.User].value.name,
+              title: "New Trip Created",
+              notification: `${data[DataEnum.User].value.name} created a trip: ${dataTripPlan.title}`,
+            };
+
+            const notifyApi = new NotifyApi();
+            await notifyApi.notificationSubscribe(newNotification);
+
+            toast.success("Trip created successfully! 👌");
           },
           {
-            pending: 'creating trip pending',
-            success: 'Trip created 👌',
-            error: 'Promise rejected 🤯'
+            pending: "Creating trip...",
+            success: "Trip created successfully 👌",
+            error: "Failed to create trip 🤯",
           }
         );
       } catch (error) {
         const e = error as AxiosError;
-        console.error(error);
-        toast.error(e.code);
+        console.error(e);
         toast.error(e.message);
+        toast.error(e.code);
       }
     });
   };
@@ -90,49 +116,38 @@ const TripPlanForm = () => {
     return ["general", "trip", ...cityDetailsTabs];
   };
 
-
   const handleAiGenerateTripAndEdit = async () => {
-    
-    
-      try {
-        await toast.promise( async () => {
-            setLoadding(true)
-            const generatedTrip: TripPlan = await TripPlanApi.aiGenerateTripPlanDontSave(data[DataEnum.User].value.id);
-            console.dir(generatedTrip)
-            setDataTripPlan(()=>generatedTrip);
-            setLoadding(false);
-        }, {
-          pending: 'Generating trip pending',
-          success: 'Trip generated 👌',
-          error: 'Promise rejected 🤯' 
-        }); 
-
-      } catch (e) {
-        const error: AxiosError = e as AxiosError; 
-        console.error(error);
-        toast.error(error.message);
-        toast.error(error.code);
-      }
-    
+    try {
+      await toast.promise(
+        async () => {
+          setLoadding(true);
+          const generatedTrip: TripPlan = await TripPlanApi.aiGenerateTripPlanDontSave(
+            data[DataEnum.User].value.id
+          );
+          setDataTripPlan(() => generatedTrip);
+          setLoadding(false);
+        },
+        {
+          pending: "Generating trip...",
+          success: "Trip generated 👌",
+          error: "Failed to generate trip 🤯",
+        }
+      );
+    } catch (e) {
+      const error: AxiosError = e as AxiosError;
+      console.error(error);
+      toast.error(error.message);
+      toast.error(error.code);
+    }
   };
 
-  return loadding ? <Loadding/> : (
-    <Container className="py-4" style={{ maxWidth: 800, padding: 0, alignItems: "center" }}>      
-      <h1 className="text-black fw-bold mb-4"
-        style={{
-          
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: "100px"
-
-        }}
-      >Create your own trip
-        <Button
-          className="btn-custom mx-3"
-          onClick={handleAiGenerateTripAndEdit}
-          disabled={isTripGenerated}
-        >
+  return loadding ? (
+    <Loadding />
+  ) : (
+    <Container className="py-4" style={{ maxWidth: 800 }}>
+      <h1 className="fw-bold mb-4 d-flex justify-content-between align-items-center">
+        Create your own trip
+        <Button className="btn-custom" onClick={handleAiGenerateTripAndEdit} disabled={isTripGenerated}>
           <FaRobot size={18} /> Fill inputs with AI
         </Button>
       </h1>
@@ -141,7 +156,7 @@ const TripPlanForm = () => {
       <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k || "general")} id="trip-form-tabs" className="mb-4">
         <Tab eventKey="general" title="General Information">
           <GeneralInformationForm
-            dataTripPlan={{ data: dataTripPlan, set: (e: TripPlan) => setDataTripPlan(e) }}
+            dataTripPlan={{ data: dataTripPlan, set: setDataTripPlan }}
           />
         </Tab>
         <Tab eventKey="trip" title="Trip">
@@ -179,13 +194,13 @@ const TripPlanForm = () => {
           )}
         </Col>
         <Col xs="auto">
-          {activeTab !== getTabOrder()[getTabOrder().length - 1] ? (
-            <Button variant="primary" onClick={handleNext}>
-              Next
-            </Button>
-          ) : (
+          {activeTab === getTabOrder()[getTabOrder().length - 1] ? (
             <Button variant="success" onClick={generateTripPlan}>
               Create Trip
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={handleNext}>
+              Next
             </Button>
           )}
         </Col>

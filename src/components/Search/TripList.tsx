@@ -14,8 +14,8 @@ import { travelTypesOptions } from "../forms/travelTypes";
 import { useNavigate } from "react-router-dom";
 import { UserApi } from "../../services/UserApi";
 import { FaArrowRight } from "react-icons/fa";
-import ChatApp from "../chat/ChatApp";
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { Notification } from "../AuthModal";
+import { NotifyApi } from "../../services/NotifyApi";
 
 interface TripListProps {
   trips: TripPlan[];
@@ -26,52 +26,53 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
   const navigate = useNavigate();
   const context = useContext(dataContext);
 
-  async function addParticipant(tripId:string){
-    await AsyncAction(context[DataEnum.Loadding].set, async () => {
-      try {
-        await toast.promise( 
-          async () => {
-            const userId = context[DataEnum.User].value.id;
-            await TripPlanApi.addParticipant(tripId, userId);
-          },
-          {
-            pending: 'load participant add',
-            success: 'participant added 👌',
-            error: 'some error 🤯'
-          }
-        );
-      } catch (error) {
-        const e = error as AxiosError;
-        console.error(error)
-        toast.error(e.code);
-        toast.error(e.message);
-      }
-    });
+  async function addParticipant(tripId: string) {
+    const notifyApi = new NotifyApi();
+    const userId = context[DataEnum.User].value.id;
+    const userName = context[DataEnum.User].value.name;
+    const trip = trips.find((trip) => trip.id === tripId);
+
+    if (!trip) {
+      toast.error("Trip not found");
+      return;
+    }
+
+    const tripTitle = trip.title;
+
+    try {
+      await toast.promise(
+        async () => {
+          // Добавляем участника через API
+          await TripPlanApi.addParticipant(tripId, userId);
+
+          // Создаём уведомление
+          const notification: Notification = {
+            user: userName,
+            title: "New Participant Joined",
+            notification: `${userName} joined the trip "${tripTitle}"!`,
+          };
+
+          // Отправляем уведомление через SignalR
+          await notifyApi.notificationSubscribe(notification);
+
+          // Показать успешное уведомление через toast
+          toast.success(`You joined the trip "${tripTitle}"! 👌`);
+        },
+        {
+          pending: "Joining the trip...",
+          success: "You have joined the trip! 👌",
+          error: "Failed to join the trip 🤯",
+        }
+      );
+    } catch (error) {
+      const e = error as AxiosError;
+      console.error(e);
+      toast.error(e.code);
+      toast.error(e.message);
+    }
   }
 
-  async function removeParticipant(tripId:string){
-    await AsyncAction(context[DataEnum.Loadding].set, async () => {
-      try {
-        await toast.promise( 
-          async () => {
-            const userId = context[DataEnum.User].value.id;
-            await TripPlanApi.removeParticipant(tripId, userId);
-          },
-          {
-            pending: 'load participant remove',
-            success: 'participant removed 👌',
-            error: 'some error 🤯'
-          }
-        );
-      } catch (error) {
-        const e = error as AxiosError;
-        console.error(error)
-        toast.error(e.code);
-        toast.error(e.message);
-      }
-    });
-  }
-
+  
   const filteredTrips = trips.filter(
   (trip) => trip.participants.length < trip.groupType
 );

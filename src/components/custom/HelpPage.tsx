@@ -1,9 +1,27 @@
 import React from "react";
-import { Container, Nav, Tab, Row, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { Container, Nav, Tab, Row, Col, Button } from "react-bootstrap";
+import { FaArrowLeft } from "react-icons/fa";
+
+
 
 const HelpPage = () => {
+
+  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <Container className="mt-4">
+      <Button
+        variant="outline-secondary"
+        className="mb-3 d-flex align-items-center gap-2"
+        onClick={handleBack}
+      >
+        <FaArrowLeft />
+        Back
+      </Button>
       <h1>Dokumentacja dla użytkowników WayWithUs</h1>
       <Tab.Container id="help-tabs" defaultActiveKey="gettingStarted">
         <Row>

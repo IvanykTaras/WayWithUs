@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Container, Nav, Navbar, Dropdown, ListGroup, Badge } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, Dropdown, ListGroup, Badge, ButtonGroup } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { dataContext, DataEnum } from "../../App";
@@ -119,8 +119,12 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
 
 
   async function TripCard(id: string) {
-    await downloadTripAndUser(id);
+    // await downloadTripAndUser(id);
     navigate(`/my-trips/${id}`);
+  } 
+  async function Help() {
+    // await downloadTripAndUser(id);
+    navigate(`/help`);
   }
 
   async function downloadTripAndUser(tripId: string) {
@@ -148,6 +152,11 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
         toast.error(e.message);
       }
     });
+  }
+
+  async function ProfilePage(id: string) {
+    // await downloadTripAndUser(id);
+    navigate(`/profile/${id}`);
   }
 
   async function tryNotify() {
@@ -243,13 +252,24 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                   >
                     <FaRobot size={18} /> Generate Trip by AI
                   </Button>
-                  <Button onClick={tryNotify}>Click me</Button>
+                  {/* <Button onClick={tryNotify}>Click me</Button> */}
                 </>
               )}
             </Nav>
             <Nav className="ms-auto d-flex align-items-center">
               {!context[DataEnum.User].value ? (
-                <Button
+                <ButtonGroup>
+                  <Button                    
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      color: "#4CAF50",
+                    }}
+                    onClick={Help}
+                  >
+                    Help
+                  </Button>
+
+                  <Button
                   style={{
                     backgroundColor: "#FFFFFF",
                     color: "#4CAF50",
@@ -258,6 +278,7 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                 >
                   Sign In
                 </Button>
+                </ButtonGroup>                
               ) : (
                 <>
                   <Dropdown align="end" style={{
@@ -331,8 +352,9 @@ export const Header: React.FC<{ notify: Notification[] }> = ({ notify }) => {
                   {/* <Dropdown.Item>
                     <Link to={"/create-trip"}>Profile</Link>
                   </Dropdown.Item> */}
-                  <Dropdown.Item onClick={()=>navigate("/create-trip")}>Create Trip with AI and Edit</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>handleAiGenerateTrip()}>Create Trip with AI and show Details</Dropdown.Item>
+                  <Dropdown.Item onClick={() => ProfilePage(context[DataEnum.User].value.id as string)}>Profile</Dropdown.Item>
+                  {/* <Dropdown.Item onClick={()=>navigate("/create-trip")}>Create Trip with AI and Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>handleAiGenerateTrip()}>Create Trip with AI and show Details</Dropdown.Item> */}
                   <Dropdown.Item>Settings</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                 </Dropdown.Menu>

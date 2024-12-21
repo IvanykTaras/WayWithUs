@@ -24,9 +24,7 @@ import ChatApp from './components/chat/ChatApp';
 import { TripCard } from './components/MyTrips/TripCard';
 import { EditTrip } from './components/MyTrips/EditTrip';
 import HelpPage from './components/custom/HelpPage';
-
-
-
+import { Profile } from './components/custom/ProfilePage';
 
 
 const router = createBrowserRouter([
@@ -73,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: "/chat/:room/:tripId",
         element: <ChatApp />,
+      },
+      {
+        path: "/profile/:id",
+        element: <Profile />,
       },
     ],
   },

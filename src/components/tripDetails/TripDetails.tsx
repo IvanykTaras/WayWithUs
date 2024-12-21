@@ -48,28 +48,28 @@ export const TripDetails: React.FC = () => {
     return participants.includes(userId);
   }
 
-  async function addParticipant(tripId:string){
-    await AsyncAction(context[DataEnum.Loadding].set, async () => {
-      try {
-        await toast.promise( 
-          async () => {
-            const userId = context[DataEnum.User].value.id;
-            await TripPlanApi.addParticipant(tripId, userId);
-          },
-          {
-            pending: 'load participant add',
-            success: 'participant added 👌',
-            error: 'some error 🤯'
-          }
-        );
-      } catch (error) {
-        const e = error as AxiosError;
-        console.error(error)
-        toast.error(e.code);
-        toast.error(e.message);
-      }
-    });
-  }
+  // async function addParticipant(tripId:string){
+  //   await AsyncAction(context[DataEnum.Loadding].set, async () => {
+  //     try {
+  //       await toast.promise( 
+  //         async () => {
+  //           const userId = context[DataEnum.User].value.id;
+  //           await TripPlanApi.addParticipant(tripId, userId);
+  //         },
+  //         {
+  //           pending: 'load participant add',
+  //           success: 'participant added 👌',
+  //           error: 'some error 🤯'
+  //         }
+  //       );
+  //     } catch (error) {
+  //       const e = error as AxiosError;
+  //       console.error(error)
+  //       toast.error(e.code);
+  //       toast.error(e.message);
+  //     }
+  //   });
+  // }
   return (
     <Card className="mb-4 shadow-sm border-0 rounded-4">
       <Row className="g-0 align-items-start">

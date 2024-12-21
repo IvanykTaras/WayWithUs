@@ -9,44 +9,34 @@ import { TripPlanApi } from "../../services/TripPlanApi";
 import textShortener from "../../hooks/useTextShortener";
 import { toast } from "react-toastify";
 import { dataContext, DataEnum } from "../../App";
-import { AsyncAction } from "../../utils";
 import { Loadding } from "../custom/Loadding";
-import context from "react-bootstrap/esm/AccordionContext";
 import { IGoogleUser } from "../../interfaces/IGoogleUser";
 import { UserApi } from "../../services/UserApi";
 import { AxiosError } from "axios";
+import { Notification } from "../AuthModal";
+import { NotifyApi } from "../../services/NotifyApi";
 
 export const EditTrip: React.FC = () => {
-  const { trip_plan_id: tripId } = useParams<{ trip_plan_id: string }>(); // Получаем tripId из URL
+  const { trip_plan_id: tripId } = useParams<{ trip_plan_id: string }>();
   const navigate = useNavigate();
   const data = useContext(dataContext);
   const [loadding, setLoadding] = useState(false);
-
-  const trips = data[DataEnum.Trips].value; // Загружаем список путешествий из контекста
-  const users = data[DataEnum.Users].value; // Загружаем список пользователей из контекста
-
   const [dataTripPlan, setDataTripPlan] = useState<TripPlan | null>(null);
   const [activeTab, setActiveTab] = useState<string>("general");
 
-  const loaddingState = data[DataEnum.Loadding]; // Глобальное состояние загрузки
-
   useEffect(() => {
-    
     const user = data[DataEnum.User].value;
     if (!user) {
       toast.warn("You need to log in to edit trips.");
+      return;
     }
-    return ()=>{
-      (async ()=>{
-        setLoadding(true)
-        console.count()
-        await fetchTripPlan()
-        setLoadding(false)
-      })()
-    };
+
+    (async () => {
+      setLoadding(true);
+      await fetchTripPlan();
+      setLoadding(false);
+    })();
   }, []);
-
-
 
   const fetchTripPlan = async () => {
     if (!tripId) {
@@ -55,39 +45,55 @@ export const EditTrip: React.FC = () => {
     }
 
     try {
-      await toast.promise(async ()=>{
-        const trip = await TripPlanApi.getById(tripId);
-        setDataTripPlan(trip);
-      },{
-        pending: "Loading trip data...",
-        success: "Trip data loaded successfully!",
-        error: "Failed to load trip data.",
-      });
+      await toast.promise(
+        async () => {
+          const trip = await TripPlanApi.getById(tripId);
+          setDataTripPlan(trip);
+        },
+        {
+          pending: "Loading trip data...",
+          success: "Trip data loaded successfully!",
+          error: "Failed to load trip data.",
+        }
+      );
     } catch (error) {
       toast.error("Failed to load trip data.");
       console.error("Error fetching trip plan:", error);
     }
   };
 
-  // Сохранение изменений
   const handleSaveChanges = async () => {
     if (!dataTripPlan || !tripId) return;
 
-    await toast.promise(async ()=>{
+    await toast.promise(
+      async () => {
         try {
-          await TripPlanApi.update(tripId, dataTripPlan); // Вызов метода API
-          const trip: TripPlan = await TripPlanApi.getById(tripId);
-          const user: IGoogleUser = await UserApi.getUserById(trip.userId);
-          data[DataEnum.TripView].set({
-            trip: trip,
-            user: user
-          })
-          data[DataEnum.DownloadTrips].set(true); // Обновление списка путешествий в глобальном состоянии
-          navigate(`/my-trips/${tripId}`); // Перенаправление к странице путешествия
-        
+          await TripPlanApi.update(tripId, dataTripPlan);
+
+          const editNotification: Notification = {
+            user: data[DataEnum.User].value.name,
+            title: "Trip Updated",
+            notification: `${data[DataEnum.User].value.name} updated the trip: ${dataTripPlan.title}`,
+          };
+
+          // Отправляем уведомление через SignalR
+          const notifyApi = new NotifyApi();
+          await notifyApi.notificationSubscribe(editNotification);
+
+          toast.info(`${editNotification.user} updated the trip: ${dataTripPlan.title}`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+
+          navigate(`/my-trips/${tripId}`);
         } catch (error) {
           const e = error as AxiosError;
-          console.error(error)
+          console.error(error);
           toast.error(e.code);
           toast.error(e.message);
         }
@@ -96,11 +102,10 @@ export const EditTrip: React.FC = () => {
         pending: "Saving changes...",
         success: "Trip updated successfully! 🎉",
         error: "Failed to save changes. Please try again. 🤯",
-      }      
-      );
+      }
+    );
   };
 
-  // Логика переключения вкладок
   const handlePrevTab = () => {
     const tabs = getTabOrder();
     const currentIndex = tabs.indexOf(activeTab);
@@ -131,7 +136,9 @@ export const EditTrip: React.FC = () => {
     );
   }
 
-  return loadding ? <Loadding/> :(
+  return loadding ? (
+    <Loadding />
+  ) : (
     <Container className="py-4" style={{ maxWidth: 800 }}>
       <h1 className="fw-bold mb-4">Edit Your Trip</h1>
       <Tabs

@@ -207,9 +207,9 @@ export const AuthModal: React.FC<IProps> = ({ show, handleClose, setNotify, noti
       await connection.start();
 
       const notification: Notification = {
-        user: data.user.email,
+        user: data.user.name,
         title: "User sign in", 
-        notification: "User sign in now 🎉"
+        notification: `${data.user.name} is online 🎉`
       }
       await connection.invoke("SendNotification", notification);
   }

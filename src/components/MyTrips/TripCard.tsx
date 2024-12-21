@@ -19,6 +19,10 @@ import { TripPlanApi } from "../../services/TripPlanApi";
 import { UserApi } from "../../services/UserApi";
 import { Loadding } from "../custom/Loadding";
 import Markdown from "react-markdown";
+import InterestingPlaces from "./InterestingPlaces";
+import { Notification } from "../AuthModal";
+import { NotifyApi } from "../../services/NotifyApi";
+
 
 export const TripCard: React.FC = () => {
   const [tripView, setTripView] = useState<{
@@ -91,8 +95,21 @@ export const TripCard: React.FC = () => {
       try {
         await toast.promise(
           async () => {
-            // Удаление поездки через API
+            // Удаляем поездку через API
             await TripPlanApi.deleteTrip(tripId);
+
+            // Отправляем уведомление всем участникам
+            const notifyApi = new NotifyApi();
+            const notification: Notification = {
+              user: context[DataEnum.User].value.name,
+              title: "Trip Deleted",
+              notification: `${context[DataEnum.User].value.name} has deleted the trip.`,
+            };
+            await notifyApi.notificationSubscribe(notification);
+
+            // Перенаправление на страницу "My Trips"
+            toast.info("Redirecting to My Trips...");
+            navigate("/my-trips");
           },
           {
             pending: "Deleting trip...",
@@ -100,10 +117,6 @@ export const TripCard: React.FC = () => {
             error: "Failed to delete trip 🤯",
           }
         );
-
-        // Навигация после успешного удаления
-        toast.info("Redirecting to My Trips...");
-        navigate("/my-trips");
       } catch (error) {
         const e = error as AxiosError;
         console.error("Error during trip deletion:", e);
@@ -112,20 +125,30 @@ export const TripCard: React.FC = () => {
     });
   }
 
-
-  
   async function removeParticipant(tripId: string) {
     AsyncAction(context[DataEnum.Loadding].set, async () => {
       try {
         await toast.promise(
           async () => {
+            // Удаляем участника через API
             await TripPlanApi.removeParticipant(tripId, context[DataEnum.User].value.id as string);
+
+            // Отправляем уведомление
+            const notifyApi = new NotifyApi();
+            const notification: Notification = {
+              user: context[DataEnum.User].value.name,
+              title: "Participant Left",
+              notification: `${context[DataEnum.User].value.name} has left the trip.`,
+            };
+            await notifyApi.notificationSubscribe(notification);
+
+            // Перенаправление на страницу "My Trips"
             navigate("/my-trips");
           },
           {
-            pending: 'removing participant pending',
-            success: 'Participant removed 👌',
-            error: 'Promise rejected 🤯'
+            pending: "Leaving trip...",
+            success: "You have left the trip successfully! 👌",
+            error: "Failed to leave the trip 🤯",
           }
         );
       } catch (error) {
@@ -143,13 +166,28 @@ export const TripCard: React.FC = () => {
       return;
     }
 
+    const removerName = context[DataEnum.User].value.name; 
+    const removedUser = users.find((user) => user.id === userId)?.name || "Unknown User"; 
+    const tripTitle = tripView.trip.title;
+
     await AsyncAction(context[DataEnum.Loadding].set, async () => {
       try {
         await toast.promise(
           async () => {
-            await TripPlanApi.removeParticipant(tripView?.trip.id!, userId); 
-            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId)); 
-            toast.success(`Participant with ID ${userId} removed successfully!`);
+            
+            await TripPlanApi.removeParticipant(tripView?.trip.id!, userId);
+
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+
+            const notifyApi = new NotifyApi();
+            const notification: Notification = {
+              user: removerName,
+              title: "Participant Removed",
+              notification: `${removerName} removed ${removedUser} from the trip "${tripTitle}".`,
+            };
+            await notifyApi.notificationSubscribe(notification);
+
+            toast.success(`You removed ${removedUser} from the trip "${tripTitle}".`);
           },
           {
             pending: "Removing participant...",
@@ -159,11 +197,12 @@ export const TripCard: React.FC = () => {
         );
       } catch (error) {
         const e = error as AxiosError;
-        console.error(error);
+        console.error(e);
         toast.error(e.code || "Error removing participant.");
       }
     });
   };
+
 
   
 
@@ -182,16 +221,14 @@ export const TripCard: React.FC = () => {
     }
 
     const cityLocations = tripView.trip.cityPlans.map((cityPlan) => cityPlan.originLocation);
-    const origin = cityLocations[0]; // Первый город
-    const destination = cityLocations[cityLocations.length - 1]; // Последний город
-    const waypoints = cityLocations.slice(1, -1).join("|"); // Промежуточные города
+    const origin = cityLocations[0]; 
+    const destination = cityLocations[cityLocations.length - 1]; 
+    const waypoints = cityLocations.slice(1, -1).join("|"); 
 
-    // Формирование URL для маршрута в Google Maps
     const routeUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
       origin
     )}&destination=${encodeURIComponent(destination)}&waypoints=${encodeURIComponent(waypoints)}`;
 
-    // Открытие маршрута в новой вкладке
     window.open(routeUrl, "_blank");
   };
 
@@ -233,7 +270,7 @@ export const TripCard: React.FC = () => {
             <ButtonGroup
               className="w-100"
               style={{
-                gap: "5px", // Добавление отступов между кнопками
+                gap: "5px", 
               }}
             >
               <Button
@@ -358,7 +395,7 @@ export const TripCard: React.FC = () => {
                       <FaUser size={18} className="me-2" />
                       {user.name}
                     </span>
-                    {loggedInUserId === tripView?.trip.userId && user.id !== tripView?.trip.userId && ( // Условие
+                    {loggedInUserId === tripView?.trip.userId && user.id !== tripView?.trip.userId && ( 
                       <Button
                         variant="outline-danger"
                         size="sm"
@@ -501,6 +538,8 @@ export const TripCard: React.FC = () => {
                               <br />
                               <strong>About {cityPlan.originLocation.split(",")[0]}:</strong>{" "}
                               <Markdown>{cityPlan.description || "No description available"}</Markdown>
+
+                              <InterestingPlaces originLocation={cityPlan.originLocation} />    
                               
                               <br />
                               <strong>Accommodation: </strong>
