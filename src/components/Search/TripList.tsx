@@ -39,37 +39,39 @@ const TripList: React.FC<TripListProps> = ({ trips, users }) => {
 
     const tripTitle = trip.title;
 
-    try {
-      await toast.promise(
-        async () => {
-          // Добавляем участника через API
-          await TripPlanApi.addParticipant(tripId, userId);
-
-          // Создаём уведомление
-          const notification: Notification = {
-            user: userName,
-            title: "New Participant Joined",
-            notification: `${userName} joined the trip "${tripTitle}"!`,
-          };
-
-          // Отправляем уведомление через SignalR
-          await notifyApi.notificationSubscribe(notification);
-
-          // Показать успешное уведомление через toast
-          toast.success(`You joined the trip "${tripTitle}"! 👌`);
-        },
-        {
-          pending: "Joining the trip...",
-          success: "You have joined the trip! 👌",
-          error: "Failed to join the trip 🤯",
-        }
-      );
-    } catch (error) {
-      const e = error as AxiosError;
-      console.error(e);
-      toast.error(e.code);
-      toast.error(e.message);
-    }
+    AsyncAction(context[DataEnum.Loadding].set, async () => {
+      try {
+        await toast.promise(
+          async () => {
+            // Добавляем участника через API
+            await TripPlanApi.addParticipant(tripId, userId);
+  
+            // Создаём уведомление
+            const notification: Notification = {
+              user: userName,
+              title: "New Participant Joined",
+              notification: `${userName} joined the trip "${tripTitle}"!`,
+            };
+  
+            // Отправляем уведомление через SignalR
+            await notifyApi.notificationSubscribe(notification);
+  
+            // Показать успешное уведомление через toast
+            toast.success(`You joined the trip "${tripTitle}"! 👌`);
+          },
+          {
+            pending: "Joining the trip...",
+            success: "You have joined the trip! 👌",
+            error: "Failed to join the trip 🤯",
+          }
+        );
+      } catch (error) {
+        const e = error as AxiosError;
+        console.error(e);
+        toast.error(e.code);
+        toast.error(e.message);
+      }
+    });
   }
 
   
